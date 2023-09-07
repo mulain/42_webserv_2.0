@@ -7,7 +7,6 @@ class Response
 {
 	public:
 		Response(const Request&);
-		Response(int, const Request&); // status page constructor
 		Response(std::string, const Request&); // send file constructor
 		Response(generateContent, const Request&); // send internal buffer constructor
 		Response(const Response&);

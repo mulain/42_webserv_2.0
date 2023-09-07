@@ -12,8 +12,7 @@ class StatusPage: public Response
 		bool				send(int); // override (but not cpp98)
 	
 	private:
-		std::string			buildStatusPage(int);
-		std::stringstream	_sendBuffer;
+		std::string			buildStatusPage();
 };
 
 #endif

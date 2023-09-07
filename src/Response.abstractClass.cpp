@@ -4,30 +4,6 @@ Response::Response(const Request& request):
 	_request(request)
 {}
 
-// status page constructor
-Response::Response(int code, const Request& request):
-	_request(request),
-	_filePosition(0),
-	_responseHeadSent(false)
-{
-	generateStatusPageResponse(code);
-	_contentLength = _dynContBuffer.str().size();
-	_contentType = getMimeType(".html");
-	_sendBuffer	<< buildResponseHead(code);
-	_sendBuffer << _dynContBuffer.str();
-}
-
-// file sending constructor
-Response::Response(std::string sendPath, const Request& request):
-	_request(request),
-	_filePosition(0),
-	_sendPath(sendPath),
-	_responseHeadSent(false)
-{
-	std::cout << "Response constructor send a file" << std::endl;
-	sendSelector = &Response::sendFile;
-}
-
 // dynamic content generation constructor (w/o CGI)
 Response::Response(generateContent genContent, const Request& request):
 	_request(request)
