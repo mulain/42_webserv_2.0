@@ -6,17 +6,16 @@
 class Response
 {
 	public:
-		Response(const Request&);
-		Response(std::string, const Request&); // send file constructor
 		Response(generateContent, const Request&); // send internal buffer constructor
 		Response(const Response&);
-		virtual ~Response();
+		virtual ~Response() {};
 
 		Response&			operator=(const Response&);
+		virtual Response*	clone() const = 0; // when overriding these in derived class, should use "override" even if not necessary. But not cpp98.
 		virtual bool		send(int) = 0;
 	
 	protected:
-//		bool				sendFile(int);
+		Response(const Request&);
 //		bool				sendInternalBuffer(int);
 		void				generateSessionLogPage();
 		void				generateDirListingPage();

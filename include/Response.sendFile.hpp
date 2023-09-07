@@ -7,9 +7,11 @@ class SendFile: public Response
 {
 	public:
 		SendFile(std::string, const Request&);
-		~SendFile();
+		SendFile(const SendFile&);
+		~SendFile() {}
 
-		bool				send(int); // override (but not cpp98)
+		bool				send(int);
+		Response*			clone() const;
 	
 	private:
 		void				sendResponseHead(int fd);

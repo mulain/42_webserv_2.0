@@ -37,7 +37,7 @@ Client& Client::operator=(const Client& src)
 	else
 		_request = NULL;
 	if (src._response != NULL)
-		_response = new Response(*src._response);
+		_response = _response->clone();
 	else
 		_response = NULL;
 	_fd = src._fd;

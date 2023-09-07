@@ -12,8 +12,16 @@ StatusPage::StatusPage(int code, const Request& request):
 	_sendBuffer << responseBody;
 }
 
-StatusPage::~StatusPage()
-{}
+StatusPage::StatusPage(const StatusPage& src):
+	Response(src)
+{
+	// This derived class has no own vars.
+}
+
+Response* StatusPage::clone() const
+{
+	return new StatusPage(*this);
+}
 
 bool StatusPage::send(int fd)
 {

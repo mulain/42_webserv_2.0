@@ -10,11 +10,19 @@ SendFile::SendFile(std::string sendPath, const Request& request):
 	_contentLength = fileSize(sendPath);
 	_contentType = getMimeType(sendPath);
 	_sendBuffer	<< buildResponseHead();
-
 }
 
-SendFile::~SendFile()
+SendFile::SendFile(const SendFile& src):
+	Response(src),
+	_sendPath(src._sendPath),
+	_responseHeadSent(src._responseHeadSent),
+	_filePosition(src._filePosition)
 {}
+
+Response* SendFile::clone() const
+{
+	return new SendFile(*this);
+}
 
 bool SendFile::send(int fd)
 {
@@ -35,7 +43,8 @@ bool SendFile::send(int fd)
 	if (!_responseHeadSent)
 		return (sendResponseHead(fd), true);
 
-	std::ifstream fileStream(_sendPath.c_str(), std::ios::binary);
+	std::ifstream	fileStream(_sendPath.c_str(), std::ios::binary);
+	
 	if (!fileStream)
 	{
 		fileStream.close();
@@ -52,11 +61,13 @@ bool SendFile::send(int fd)
 		fileStream.close();
 		throw NetworkFailure(__FUNCTION__);
 	}
+	
 	if (fileStream.eof())
 	{
 		fileStream.close();
 		return false;
 	}
+	
 	_filePosition = fileStream.tellg();
 	fileStream.close();
 	return true;

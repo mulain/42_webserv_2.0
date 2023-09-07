@@ -4,6 +4,21 @@ Response::Response(const Request& request):
 	_request(request)
 {}
 
+Response::Response(const Response& src):
+	_request(src._request)
+{
+	*this = src;
+}
+
+Response& Response::operator=(const Response& src)
+{
+	_code = src._code;
+	_contentLength = src._contentLength;
+	_contentType = src._contentType;
+	_sendBuffer = src._sendBuffer;
+	return *this;
+}
+
 // dynamic content generation constructor (w/o CGI)
 Response::Response(generateContent genContent, const Request& request):
 	_request(request)
@@ -34,94 +49,11 @@ Response::Response(const Response& src):
 
 Response& Response::operator=(const Response& src)
 {
-	_filePosition = src._filePosition;
-	_sendPath = src._sendPath;
+	_code = src._code;
 	_contentLength = src._contentLength;
 	_contentType = src._contentType;
-	_responseHeadSent = src._responseHeadSent;
 	_sendBuffer << src._sendBuffer.str();
-	_dynContBuffer << src._dynContBuffer.str();
 	return *this;
-}
-
-bool Response::send(int fd)
-{
-	std::cout << "Response::send" << std::endl;
-	return (this->*sendSelector)(fd);
-}
-
-bool Response::sendInternalBuffer(int fd)
-{
-	char buffer[SEND_CHUNK_SIZE];
-	_sendBuffer.read(buffer, SEND_CHUNK_SIZE);
-
-	std::cout << "\n" << __FUNCTION__ << " on fd: " << fd << std::endl;
-	std::cout << _sendBuffer.str() << std::endl;
-	
-	if (::send(fd, buffer, _sendBuffer.gcount(), 0) <= 0)
-		throw NetworkFailure(__FUNCTION__);
-	
-	if (_sendBuffer.tellg() == std::streampos(-1)) // end of buffer reached
-		return false;
-	return true;
-}
-
-bool Response::sendFile(int fd)
-{
-	ANNOUNCEME
-	if (!_responseHeadSent)
-	{
-		std::cout << "stdfile in sendfile: " << _request.standardFile() << std::endl;
-		std::cout << "sendpath in sendfile: " << _sendPath << std::endl;
-		_contentLength = fileSize(_sendPath);
-		_contentType = getMimeType(_sendPath);
-		_sendBuffer << buildResponseHead(200);
-		sendInternalBuffer(fd); // if sendchunk is smaller than the header, this will not work
-		_responseHeadSent = true;
-		return true;
-	}
-	std::ifstream fileStream(_sendPath.c_str(), std::ios::binary);
-	if (!fileStream)
-	{
-		fileStream.close();
-		throw ErrorCode(500, __FUNCTION__);
-	}
-	
-	char buffer[SEND_CHUNK_SIZE];
-	fileStream.seekg(_filePosition);
-	fileStream.read(buffer, SEND_CHUNK_SIZE);
-
-	if (::send(fd, buffer, fileStream.gcount(), 0) <= 0)
-	{
-		fileStream.close();
-		throw NetworkFailure(__FUNCTION__);
-	}
-	if (fileStream.eof())
-	{
-		fileStream.close();
-		return false;
-	}
-	_filePosition = fileStream.tellg();
-	fileStream.close();
-	return true;
-}
-
-void Response::generateStatusPageResponse(int code)
-{
-	std::string httpMsg = getHttpMsg(code);
-
-	_dynContBuffer	<< "<!DOCTYPE html><html><head>\n"
-					<< "<title>webserv - " << code << ": " << httpMsg << "</title>\n"
-					<< "<style>\n"
-					<< "body {background-color: black; color: white; font-family: Arial, sans-serif; margin: 0; padding: 5% 0 0 0; text-align: center;}\n"
-					<< "h1 {font-size: 42px;}\n"
-					<< "p {font-size: 16px; line-height: 1.5;}\n"
-					<< "</style></head>\n"
-					<< "<body>\n"
-					<< "<h1>" << code << ": " << httpMsg << "</h1>\n"
-					<< "<img style=\"margin-left: auto;\" src=\"https://http.cat/" << code << "\" alt=\"" << httpMsg << "\">\n"
-					<< "</body>\n"
-					<< "</html>\n";
 }
 
 void Response::generateSessionLogPage()

@@ -7,9 +7,11 @@ class StatusPage: public Response
 {
 	public:
 		StatusPage(int, const Request&);
-		~StatusPage();
+		StatusPage(const StatusPage&);
+		~StatusPage() {}
 
-		bool				send(int); // override (but not cpp98)
+		bool				send(int);
+		Response*			clone() const;
 	
 	private:
 		std::string			buildStatusPage();
