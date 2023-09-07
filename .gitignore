@@ -1,0 +1,17 @@
+*.o
+*.out
+/obj
+
+webserv
+
+.vscode/
+.DS_Store
+
+output.txt
+
+system/logs/
+
+system/dirListing.html
+system/errorPage.html
+system/cgi.html
+website/sessionlog.html
