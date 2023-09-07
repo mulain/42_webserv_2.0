@@ -19,28 +19,6 @@ Response& Response::operator=(const Response& src)
 	return *this;
 }
 
-// dynamic content generation constructor (w/o CGI)
-Response::Response(generateContent genContent, const Request& request):
-	_request(request)
-{
-	sendSelector = &Response::sendInternalBuffer;
-	switch (genContent)
-	{
-		case dirListing:
-			generateDirListingPage();
-			break;
-		case sessionLog:			
-			generateSessionLogPage();
-			break;
-		default:
-			throw (ErrorCode(500, __FUNCTION__));
-	}
-	_contentLength = _dynContBuffer.str().size();
-	_contentType = getMimeType(".html");
-	_sendBuffer	<< buildResponseHead(200);
-	_sendBuffer << _dynContBuffer.str();
-}
-
 Response::Response(const Response& src):
 	_request(src._request)
 {
@@ -54,57 +32,6 @@ Response& Response::operator=(const Response& src)
 	_contentType = src._contentType;
 	_sendBuffer << src._sendBuffer.str();
 	return *this;
-}
-
-void Response::generateSessionLogPage()
-{
-	std::string logPath = SYS_LOGS + _request.sessionID() + ".log";
-	
-	std::ifstream logFile(logPath.c_str());
-	if (!logFile)
-	{
-		logFile.close();
-		throw ErrorCode(500, __FUNCTION__);
-	}
-
-	_dynContBuffer	<< "<!DOCTYPE html>\n"
-					<< "<html>\n"
-					<< "<head>\n"
-					<< "<title>webserv - session log</title>\n"
-					<< "<link rel=\"stylesheet\" type=\"text/css\" href=\"styles.css\"/>\n"
-					<< "</head>\n"
-					<< "<body>\n"
-					<< "<div class=\"logContainer\">\n"
-					<< "<h2>" << "Log for session id " << _request.sessionID() << "</h2>\n"
-					<< "<logtext>" << logFile.rdbuf() << "</logtext>\n"
-					<< "</div>\n"
-					<< "<img style=\"margin-left: auto; position: fixed; top: 0; right: 0; height: 70%; z-index: 1;\" src=\"/img/catlockHolmes.png\">\n"
-					<< "</body>\n"
-					<< "</html>\n";
-	logFile.close();
-}
-
-void Response::generateDirListingPage()
-{
-	struct dirent*	ent;
-	DIR* 			dir = opendir(_request.updatedURL().c_str());
-
-	_dynContBuffer	<< "<head><title>Test Website for 42 Project: webserv</title><link rel=\"stylesheet\" type=\"text/css\" href=\"/styles.css\"/></head>"
-					<< "<html><body><h1>Directory Listing</h1><ul>";
-	if (dir)
-	{
-		while ((ent = readdir(dir)) != NULL)
-		{
-			if (strcmp(ent->d_name, ".") == 0)
-				continue;
-			if (ent->d_type == DT_DIR) // append a slash if it's a directory
-				_dynContBuffer << "<li><a href=\"" << _request.directory() + ent->d_name << "/\">" << ent->d_name << "/</a></li>";
-			else
-				_dynContBuffer << "<li><a href=\"" << _request.directory() + ent->d_name << "\">" << ent->d_name << "</a></li>";
-		}
-		closedir(dir);
-	}
-	_dynContBuffer << "</ul></body></html>";
 }
 
 std::string Response::buildResponseHead()

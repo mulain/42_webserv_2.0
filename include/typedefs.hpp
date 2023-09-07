@@ -16,6 +16,6 @@ typedef enum
 {
 	dirListing,
 	sessionLog
-}	generateContent;
+}	dynContent;
 
 #endif

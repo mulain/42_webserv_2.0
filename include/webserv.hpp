@@ -45,6 +45,8 @@ class Server;
 # include "Request.hpp"
 # include "Response.abstractClass.hpp"
 # include "Response.statusPage.hpp"
+# include "Response.dynContent.hpp"
+# include "Response.sendFile.hpp"
 # include "ErrorCode.exception.hpp"
 # include "NetworkFailure.exception.hpp"
 # include "Client.hpp"

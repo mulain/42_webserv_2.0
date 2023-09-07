@@ -6,7 +6,7 @@
 class Response
 {
 	public:
-		Response(generateContent, const Request&); // send internal buffer constructor
+		Response(dynContent, const Request&); // send internal buffer constructor
 		Response(const Response&);
 		virtual ~Response() {};
 
