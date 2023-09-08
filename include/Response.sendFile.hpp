@@ -17,7 +17,7 @@ class SendFile: public Response
 		void				sendResponseHead(int fd);
 		
 		std::string			_sendPath;
-		bool				_responseHeadSent;
+		bool				_responseHeadIncomplete;
 		std::streampos		_filePosition;
 };
 

@@ -1,9 +1,9 @@
-#include "../include/Response.sendFile.hpp"
+#include "webserv.hpp"
 
 SendFile::SendFile(std::string sendPath, const Request& request):
 	Response(request),
 	_sendPath(sendPath),
-	_responseHeadSent(false),
+	_responseHeadIncomplete(true),
 	_filePosition(0)
 {
 	_code = 200;
@@ -15,7 +15,7 @@ SendFile::SendFile(std::string sendPath, const Request& request):
 SendFile::SendFile(const SendFile& src):
 	Response(src),
 	_sendPath(src._sendPath),
-	_responseHeadSent(src._responseHeadSent),
+	_responseHeadIncomplete(src._responseHeadIncomplete),
 	_filePosition(src._filePosition)
 {}
 
@@ -26,22 +26,11 @@ Response* SendFile::clone() const
 
 bool SendFile::send(int fd)
 {
-	char	buffer[SEND_CHUNK_SIZE];
-	
-	_sendBuffer.read(buffer, SEND_CHUNK_SIZE);
-	
-	if (::send(fd, buffer, _sendBuffer.gcount(), 0) <= 0)
-		throw NetworkFailure(__FUNCTION__);
-	
-	if (_sendBuffer.tellg() == std::streampos(-1)) // end of buffer reached
-		return false;
-	return true;
-}
-
-bool SendFile::send(int fd)
-{
-	if (!_responseHeadSent)
-		return (sendResponseHead(fd), true);
+	if (_responseHeadIncomplete)
+	{
+		_responseHeadIncomplete = sendInternalBuffer(fd);
+		return true;
+	}
 
 	std::ifstream	fileStream(_sendPath.c_str(), std::ios::binary);
 	
@@ -71,14 +60,4 @@ bool SendFile::send(int fd)
 	_filePosition = fileStream.tellg();
 	fileStream.close();
 	return true;
-}
-
-void SendFile::sendResponseHead(int fd)
-{
-	char	buffer[SEND_CHUNK_SIZE];
-
-	_sendBuffer.read(buffer, SEND_CHUNK_SIZE);
-	if (::send(fd, buffer, _sendBuffer.gcount(), 0) <= 0) // this assumes sendchunk big enough for entire response
-		throw NetworkFailure(__FUNCTION__);
-	_responseHeadSent = true;
 }

@@ -2,7 +2,7 @@ NAME	=	webserv
 
 CC		=	c++
 RM		=	rm -rf
-FLAGS	=	-Wall -Wextra -Werror -pedantic -std=c++98 #-fsanitize=address
+FLAGS	=	-Wall -Wextra -Werror -pedantic -std=c++98 -Iinclude #-fsanitize=address
 
 COLOR	=	\033[30m
 RESET	=	\033[0m
@@ -16,8 +16,8 @@ SRCFILE	=	main.cpp\
 			ErrorCode.exception.cpp\
 			NetworkFailure.exception.cpp\
 			Response.abstractClass.cpp\
-			Response.statusPage.cpp\
 			Response.sendFile.cpp\
+			Response.statusPage.cpp\
 			Response.dynContent.cpp\
 			Server.cpp\
 			webserv.cpp

@@ -1,4 +1,4 @@
-#include "../include/webserv.hpp"
+# include "webserv.hpp"
 
 void sigHandler(int sig)
 {

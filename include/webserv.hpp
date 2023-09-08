@@ -35,7 +35,7 @@ class Client;
 class Config;
 class ConfigFile;
 class Request;
-class Response;
+//class Response;
 class Server;
 
 // internal headers
@@ -43,10 +43,12 @@ class Server;
 # include "defines.hpp"
 # include "Binding.hpp"
 # include "Request.hpp"
+
 # include "Response.abstractClass.hpp"
-# include "Response.statusPage.hpp"
 # include "Response.dynContent.hpp"
 # include "Response.sendFile.hpp"
+# include "Response.statusPage.hpp"
+
 # include "ErrorCode.exception.hpp"
 # include "NetworkFailure.exception.hpp"
 # include "Client.hpp"

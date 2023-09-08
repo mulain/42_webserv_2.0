@@ -1,4 +1,4 @@
-#include "../include/NetworkFailure.exception.hpp"
+# include "webserv.hpp"
 
 NetworkFailure::NetworkFailure(std::string throwingFunction)
 {

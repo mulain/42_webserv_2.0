@@ -1,4 +1,4 @@
-#include "../include/ErrorCode.exception.hpp"
+# include "webserv.hpp"
 
 ErrorCode::ErrorCode(int errorCode, std::string throwingFunction):
 	_errorCode(errorCode)

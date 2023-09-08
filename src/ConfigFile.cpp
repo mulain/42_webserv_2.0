@@ -1,4 +1,4 @@
-#include "../include/ConfigFile.hpp"
+# include "webserv.hpp"
 
 ConfigFile::ConfigFile(const char* configPath)
 {

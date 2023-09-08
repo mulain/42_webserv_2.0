@@ -1,4 +1,4 @@
-#include "../include/Server.hpp"
+# include "webserv.hpp"
 
 Server::Server(int argc, char** argv):
 	_configFile(NULL),

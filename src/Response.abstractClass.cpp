@@ -1,4 +1,4 @@
-#include "../include/Response.abstractClass.hpp"
+#include "webserv.hpp"
 
 Response::Response(const Request& request):
 	_request(request),
@@ -20,6 +20,22 @@ Response& Response::operator=(const Response& src)
 	_sendBuffer.str() = src._sendBuffer.str();
 	_sendBuffer.seekg(src._sendBufPos);
 	return *this;
+}
+
+bool Response::sendInternalBuffer(int fd)
+{
+	char	buffer[SEND_CHUNK_SIZE];
+	
+	_sendBuffer.seekg(_sendBufPos); // need this for copy constructor: tellg() is non const and so the streampos cannot be copied
+	_sendBuffer.read(buffer, SEND_CHUNK_SIZE);
+	_sendBufPos = _sendBuffer.tellg();
+	
+	if (::send(fd, buffer, _sendBuffer.gcount(), 0) <= 0)
+		throw NetworkFailure(__FUNCTION__);
+	
+	if (_sendBuffer.tellg() == std::streampos(-1)) // end of buffer reached
+		return false;
+	return true;
 }
 
 std::string Response::buildResponseHead()

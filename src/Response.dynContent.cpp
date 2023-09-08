@@ -1,4 +1,4 @@
-#include "../include/Response.dynContent.hpp"
+#include "webserv.hpp"
 
 DynContent::DynContent(dynCont contentSelector, const Request& request):
 	Response(request)
@@ -31,16 +31,8 @@ DynContent::DynContent(const DynContent& src):
 
 bool DynContent::send(int fd)
 {
-	char	buffer[SEND_CHUNK_SIZE];
-	
-	_sendBuffer.read(buffer, SEND_CHUNK_SIZE);
-	
-	if (::send(fd, buffer, _sendBuffer.gcount(), 0) <= 0)
-		throw NetworkFailure(__FUNCTION__);
-	
-	if (_sendBuffer.tellg() == std::streampos(-1)) // end of buffer reached
-		return false;
-	return true;
+	// this derived class only sends from internal buffer, so its public send() just redirects there
+	return sendInternalBuffer(fd);
 }
 
 Response* DynContent::clone() const
