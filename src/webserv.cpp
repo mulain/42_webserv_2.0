@@ -146,7 +146,9 @@ bool resourceExists(const std::string& path)
 	if (path.empty())
 		return false;
 	std::ifstream resource(path.c_str());
-	return resource.good();
+	bool exists = resource.good();
+	resource.close();
+	return exists;
 }
 
 bool isDirectory(const std::string& path)

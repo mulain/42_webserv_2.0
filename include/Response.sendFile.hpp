@@ -14,8 +14,6 @@ class SendFile: public Response
 		Response*			clone() const;
 	
 	private:
-		void				sendResponseHead(int fd);
-		
 		std::string			_sendPath;
 		bool				_responseHeadIncomplete;
 		std::streampos		_filePosition;
