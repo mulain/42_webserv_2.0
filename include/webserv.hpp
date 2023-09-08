@@ -68,13 +68,13 @@ bool isAlnumStr(const std::string &);
 bool isAlnumStrPlus(const std::string&, const std::string&);
 
 // Determines whether strings are the same (case-insensitive).
-bool isSameNoCase(std::string, std::string);
+bool isSameNoCase(const std::string&, const std::string&);
 
 // Converts the alphabetical characters in a string to lowercase.
-std::string strToLower(std::string);
+std::string strToLower(const std::string&);
 
-// Removes the characters defined by the macro WHITESPACE from the beginning and end of a string ref.
-std::string trim(std::string &);
+// Removes the characters defined by the macro WHITESPACE from the beginning and end of a string ref and also returns a matching string. Wyld.
+std::string trim(std::string&);
 
 // Returns a substring from the beginning of the passed string ref to the beginning of the first occurence of the 2nd argument. Deletes the substring and the 2nd argument from the passed string.
 std::string splitEraseStr(std::string &, const std::string&);
@@ -83,10 +83,10 @@ std::string splitEraseStr(std::string &, const std::string&);
 std::string splitEraseTrimChars(std::string&, const std::string&);
 
 // Returns a string vector. First argument is the string ref to operate on. 2nd argument is a string containing the characters of which any single one delimits the final strings. The 3rd argument denotes the end of the region to be processed.
-std::vector<std::string> splitEraseStrVec(std::string& input, const std::string& targetChars, const std::string& endOfParsing);
+std::vector<std::string> splitEraseStrVec(std::string&, const std::string&, const std::string&);
 
 // Splits a string ref and returns the first instruction it contains, defined as all characters from the string ref's start until the next semicolon or within the next pair of curly braces. Deletes the instruction from the string ref.
-std::string getInstruction(std::string& inputStr);
+std::string getInstruction(std::string&);
 
 // Checks whether a resource exists, be it file or directory.
 bool resourceExists(const std::string&);

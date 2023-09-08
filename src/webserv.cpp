@@ -94,11 +94,13 @@ bool isSameNoCase(const std::string& str_a, const std::string& str_b)
 	return strToLower(str_a) == strToLower(str_b);
 }
 
-std::string strToLower(std::string str)
+std::string strToLower(const std::string& str)
 {
-	for (std::string::iterator it = str.begin(); it != str.end(); it++)
+	std::string	lowerStr = str;
+
+	for (std::string::iterator it = lowerStr.begin(); it != lowerStr.end(); it++)
 		*it = tolower(*it);
-	return str;
+	return lowerStr;
 }
 
 std::string getInstruction(std::string& inputStr)
@@ -247,40 +249,6 @@ std::string getHttpMsg(int code)
 	}
 }
 
-std::string	createDirList(const std::string & path)
-{
-	DIR *				folder;
-	struct dirent *		directoryElement;
-	std::stringstream	dirListingStream;
-	
-	dirListingStream << "<html><body>Directory Listing:<ul>";
-	folder = opendir(path.c_str());
-	directoryElement = readdir(folder);
-	while (directoryElement != NULL)
-	{
-		std::string	compare(directoryElement->d_name);
-		if (compare == "..")
-		{
-			directoryElement = readdir(folder);
-			continue;
-		}
-		dirListingStream << "<li><a href=\">";
-		if (compare == ".")
-			dirListingStream << path << ".<\">." << path;
-		else
-			dirListingStream << compare << "<\">" << compare;
-		dirListingStream << "</a></li>";
-		directoryElement = readdir(folder);
-	}
-	closedir(folder);
-	dirListingStream << "</ul></body></html>";
-
-	std::ofstream		dirListingFile("./system/dirListing.html");
-	dirListingFile << dirListingStream.rdbuf();
-	dirListingFile.close();
-	return ("./system/dirListing.html");
-}
-
 bool stringInVec(const std::string& string, const std::vector<std::string>& vector)
 {
 	if (std::find(vector.begin(), vector.end(), string) != vector.end())
@@ -324,9 +292,9 @@ std::map<std::string, std::string> parseStrMap(std::string& input, const std::st
 
 std::string currentTime()
 {
-	time_t rawtime;
-	const char* timeformat = "%G-%m-%d %H:%M:%S";
-	char timeoutput[69];
+	time_t		rawtime;
+	const char*	timeformat = "%G-%m-%d %H:%M:%S";
+	char		timeoutput[69];
 
 	time(&rawtime);
 	tm* timeinfo = localtime(&rawtime);
@@ -337,13 +305,13 @@ std::string currentTime()
 
 std::string generateSessionId()
 {
-	char sessionId[17];
-	const char charset[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	size_t i = 0;
+	char		sessionID[17];
+	const char	charset[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	size_t		i = 0;
 	
 	srand(time(NULL));
-	for (; i < sizeof(sessionId) - 1; ++i)
-		sessionId[i] = charset[rand() % (sizeof(charset) - 1)];
-	sessionId[i] = 0;
-	return sessionId;
+	for (; i < sizeof(sessionID) - 1; ++i)
+		sessionID[i] = charset[rand() % (sizeof(charset) - 1)];
+	sessionID[i] = 0;
+	return sessionID;
 }
