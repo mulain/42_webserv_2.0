@@ -124,11 +124,13 @@ void Server::handleClients()
 
 			if (_pollStruct->revents & POLLIN)
 				_client->incomingData();
-
 			else if (_pollStruct->revents & POLLOUT)
 			{
 				if(!_client->outgoingData())
+				{
 					closeClient(CLOSE_DONE);
+					continue;
+				}
 			}
 		}
 

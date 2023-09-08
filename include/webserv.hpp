@@ -35,7 +35,6 @@ class Client;
 class Config;
 class ConfigFile;
 class Request;
-//class Response;
 class Server;
 
 // internal headers

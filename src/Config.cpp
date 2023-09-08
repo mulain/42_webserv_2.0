@@ -1,4 +1,4 @@
-# include "webserv.hpp"
+#include "webserv.hpp"
 
 Config::Config(std::string configStr, const ConfigFile& configFile)
 {

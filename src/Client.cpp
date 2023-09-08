@@ -1,4 +1,4 @@
-# include "webserv.hpp"
+#include "../include/webserv.hpp"
 
 Client::Client(const Config& config, pollfd& pollStruct, sockaddr_in address):
 	_config(config),
@@ -82,6 +82,7 @@ void Client::incomingData()
 	}
 	else if (_request->method() == DELETE)
 		handleDelete();
+	GOODBYE
 }
 
 void Client::receive()
@@ -95,7 +96,6 @@ void Client::receive()
 
 void Client::newRequest()
 {
-	ANNOUNCEME
 	_request = new Request(_buffer, _config, *this);
 	_request->process();
 	_request->whoIsI();
@@ -116,10 +116,8 @@ void Client::whoIsI() const
 	std::cout << separator << "\n" << std::endl;
 }
 
-// gets prioritized over template overload
 void Client::newResponse(int code)
 {
-	ANNOUNCEME
 	if (_response)
 		delete _response;
 	_pollStruct.events = POLLOUT | POLLHUP;
@@ -134,17 +132,17 @@ void Client::newResponse(int code)
 
 void Client::newResponse(std::string sendPath)
 {
-	ANNOUNCEME
+	ANNOUNCEME_FD
 	if (_response)
 		delete _response;
 	_pollStruct.events = POLLOUT | POLLHUP;
 
 	_response = new SendFile(sendPath, *_request);
+	std::cout << "return from making newResponse SendFile" << std::endl;
 }
 
 void Client::newResponse(dynCont contentSelector)
 {
-	ANNOUNCEME
 	if (_response)
 		delete _response;
 	_pollStruct.events = POLLOUT | POLLHUP;
@@ -159,7 +157,7 @@ void Client::sendStatusPage(int code)
 
 bool Client::outgoingData()
 {
-	ANNOUNCEME
+	ANNOUNCEME_FD
 	if (!_response)
 		std::cout << __FUNCTION__ << MMMMMEGAERROR << std::endl;
 	
@@ -168,7 +166,7 @@ bool Client::outgoingData()
 
 void Client::handleGet()
 {
-	ANNOUNCEME
+	ANNOUNCEME_FD
 	if (isDirectory(_request->updatedURL()))
 	{
 		std::string stdFile = _request->updatedURL() + _request->standardFile();

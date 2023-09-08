@@ -1,4 +1,4 @@
-# include "webserv.hpp"
+#include "webserv.hpp"
 
 Binding::Binding(const Config& config):
 	_config(&config)
