@@ -6,18 +6,18 @@
 class Config
 {
 	public:
-		Config(std::string, const ConfigFile&);
+		Config(std::string, const std::map<std::string, std::string>*);
 
 		void										whoIsI() const;
 		void										addAltConfig(const Config&);
 		std::vector<std::string>					getNames() const;
 		in_addr_t									getHost() const;
 		in_port_t									getPort() const;
-		std::string									getRoot() const;
+		const std::string&							getRoot() const;
 		bool										getDefaultDirlisting() const;
 		unsigned long								getClientMaxBody() const;
 		size_t										getMaxConnections() const;
-		std::string									getStandardFile() const;
+		const std::string&							getStandardFile() const;
 		const std::map<int, std::string>*			getStatusPagePaths() const;
 		const std::map<std::string, s_locInfo>*		getLocations() const;
 		const std::map<std::string, std::string>*	getCgiPaths() const;

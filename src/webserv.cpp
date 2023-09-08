@@ -147,8 +147,10 @@ bool resourceExists(const std::string& path)
 {
 	if (path.empty())
 		return false;
-	std::ifstream resource(path.c_str());
-	bool exists = resource.good();
+	
+	std::ifstream	resource(path.c_str());
+	bool			exists = resource.good();
+	
 	resource.close();
 	return exists;
 }
@@ -164,7 +166,7 @@ bool isDirectory(const std::string& path)
 
 size_t	fileSize(const std::string& filePath)
 {
-	struct stat fileInfo;
+	struct stat	fileInfo;
 
 	if (filePath.empty())
 		return 0;

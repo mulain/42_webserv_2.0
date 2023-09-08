@@ -1,10 +1,10 @@
 #include "webserv.hpp"
 
-Config::Config(std::string configStr, const ConfigFile& configFile)
+Config::Config(std::string configStr, const std::map<std::string, std::string>* mimeTypes):
+	_mimeTypes(mimeTypes)
 {
 	std::string	instruction, key;
 	
-	_mimeTypes = configFile.getMimeTypes();
 	setFunctionMap();
 
 	while (!configStr.empty())
@@ -81,7 +81,7 @@ in_addr_t Config::getHost() const { return _host; }
 
 in_port_t Config::getPort() const { return _port; }
 
-std::string Config::getRoot() const { return _root; }
+const std::string& Config::getRoot() const { return _root; }
 
 bool Config::getDefaultDirlisting() const { return _defaultDirListing; }
 
@@ -89,7 +89,7 @@ unsigned long Config::getClientMaxBody() const { return _clientMaxBody; }
 
 size_t Config::getMaxConnections() const { return _maxConnections; }
 
-std::string Config::getStandardFile() const { return _standardFile; }
+const std::string& Config::getStandardFile() const { return _standardFile; }
 
 const std::map<int, std::string>* Config::getStatusPagePaths() const { return &_statusPagePaths; }
 

@@ -1,7 +1,6 @@
 
 readchunk must be bigger than maxheadersize
 
-http redir chains
 upload redir > httep redir. test new code in request class
 
 
@@ -15,38 +14,5 @@ sendchunk smller than header is problem. maybe just not allow below max headersi
 
 constify everything
 
-make an interface for sending reponses
-- internal buffer
-- file
-- statusPage
 
-test if statuspage sender actually keeps the stringstream position between read (need to send large msg)
-
-remove delete from destructor and manually select point
-or static allocate request and make assignment operator.
- ----------------------------------------------------------------------
-
-Info: Server: 1 listening socket successfully bound.
-directory: /
------ Request for Client on fd 4 -----
-host: localhost:8080
-method: GET
-URL: /
-dir: /
-file: 
-content-length: 0
-content-type: 
-standardfile: index.html
-dirlisting: yes
-updatedURL: 
-updatedDirectory: /
-query string: 
---------------------------------------
------ Request for Client on fd 4 -----
-^C
-Shutdown.
-Closing socket fd 3.
-Closing socket fd 4.
-Closing socket fd 5.
-free(): double free detected in tcache 2
-make: *** [Makefile:45: run] Aborted
+constify getAltConfigs in config

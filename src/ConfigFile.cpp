@@ -7,12 +7,11 @@ ConfigFile::ConfigFile(const char* configPath)
 	setMIMEtypes();
 	
 	while (!configData.empty())
-	{
-		//Config newConfig(getConfigElement(configData), *this);
-		_configs.push_back(Config(getConfigElement(configData), *this));
-	}
+		_configs.push_back(Config(getConfigElement(configData), &_mimeTypes));
+
 	if (_configs.empty())
 		throw std::runtime_error(E_CF_NOSERVER);
+
 	if (_configs.size() > 10)
 		throw std::runtime_error(E_CF_MANYSERVER);
 	
@@ -21,6 +20,7 @@ ConfigFile::ConfigFile(const char* configPath)
 		if (combineSharedNetAddr(_configs[i], i))
 			_configs.erase(_configs.begin() + i--);
 	}
+
 	std::cout << I_CF_CONFIGIMPORT << std::endl;
 }
 
@@ -177,8 +177,5 @@ void ConfigFile::setMIMEtypes()
 	_mimeTypes[".tiff"] = "image/tiff";
 	_mimeTypes[".app"] = "application/octet-stream";
 	_mimeTypes[".ics"] = "text/calendar";
+	_mimeTypes[".webp"] = "image/webp";
 }
-
-const std::map<std::string, std::string>* ConfigFile::getMimeTypes() const { return &_mimeTypes; }
-
-const std::map<std::string, void(ConfigFile::*)(std::string&) const>*	ConfigFile::getFunctionMap() const { return &_functionMap; }
