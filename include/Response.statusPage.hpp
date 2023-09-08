@@ -1,7 +1,7 @@
 #ifndef RESPONSE_STATUSPAGE_HPP
 # define RESPONSE_STATUSPAGE_HPP
 
-# include "webserv.hpp"
+# include "Response.abstractClass.hpp"
 
 class StatusPage: public Response
 {

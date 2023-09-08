@@ -1,11 +1,13 @@
 #include "../include/Response.abstractClass.hpp"
 
 Response::Response(const Request& request):
-	_request(request)
+	_request(request),
+	_sendBufPos(0)
 {}
 
 Response::Response(const Response& src):
-	_request(src._request)
+	_request(src._request),
+	_sendBufPos(src._sendBufPos)
 {
 	*this = src;
 }
@@ -15,22 +17,8 @@ Response& Response::operator=(const Response& src)
 	_code = src._code;
 	_contentLength = src._contentLength;
 	_contentType = src._contentType;
-	_sendBuffer = src._sendBuffer;
-	return *this;
-}
-
-Response::Response(const Response& src):
-	_request(src._request)
-{
-	*this = src;
-}
-
-Response& Response::operator=(const Response& src)
-{
-	_code = src._code;
-	_contentLength = src._contentLength;
-	_contentType = src._contentType;
-	_sendBuffer << src._sendBuffer.str();
+	_sendBuffer.str() = src._sendBuffer.str();
+	_sendBuffer.seekg(src._sendBufPos);
 	return *this;
 }
 

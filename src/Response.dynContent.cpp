@@ -1,6 +1,6 @@
 #include "../include/Response.dynContent.hpp"
 
-DynContent::DynContent(dynContent contentSelector, const Request& request):
+DynContent::DynContent(dynCont contentSelector, const Request& request):
 	Response(request)
 {
 	std::string responseBody;
@@ -8,7 +8,7 @@ DynContent::DynContent(dynContent contentSelector, const Request& request):
 	switch (contentSelector)
 	{
 		case dirListing:
-			responseBody = generateDirListingPage();
+			responseBody = buildDirListingPage();
 			break;
 		case sessionLog:			
 			responseBody = buildSessionLogPage();
@@ -16,9 +16,6 @@ DynContent::DynContent(dynContent contentSelector, const Request& request):
 		default:
 			throw (ErrorCode(500, __FUNCTION__));
 	}
-
-
-
 	_code = 200;
 	_contentLength = responseBody.size();
 	_contentType = getMimeType(".html");
@@ -32,12 +29,7 @@ DynContent::DynContent(const DynContent& src):
 	// This derived class has no own vars.
 }
 
-Response* DynContent::clone() const
-{
-	return new DynContent(*this);
-}
-
-bool StatusPage::send(int fd)
+bool DynContent::send(int fd)
 {
 	char	buffer[SEND_CHUNK_SIZE];
 	
@@ -51,13 +43,19 @@ bool StatusPage::send(int fd)
 	return true;
 }
 
-std::string Response::buildDirListingPage()
+Response* DynContent::clone() const
 {
-	struct dirent*	ent;
-	DIR* 			dir = opendir(_request.updatedURL().c_str());
+	return new DynContent(*this);
+}
 
-	_dynContBuffer	<< "<head><title>Test Website for 42 Project: webserv</title><link rel=\"stylesheet\" type=\"text/css\" href=\"/styles.css\"/></head>"
-					<< "<html><body><h1>Directory Listing</h1><ul>";
+std::string DynContent::buildDirListingPage()
+{
+	std::stringstream	ss;
+	struct dirent*		ent;
+	DIR* 				dir = opendir(_request.updatedURL().c_str());
+
+	ss	<< "<head><title>Test Website for 42 Project: webserv</title><link rel=\"stylesheet\" type=\"text/css\" href=\"/styles.css\"/></head>"
+		<< "<html><body><h1>Directory Listing</h1><ul>";
 	if (dir)
 	{
 		while ((ent = readdir(dir)) != NULL)
@@ -65,13 +63,14 @@ std::string Response::buildDirListingPage()
 			if (strcmp(ent->d_name, ".") == 0)
 				continue;
 			if (ent->d_type == DT_DIR) // append a slash if it's a directory
-				_dynContBuffer << "<li><a href=\"" << _request.directory() + ent->d_name << "/\">" << ent->d_name << "/</a></li>";
+				ss << "<li><a href=\"" << _request.directory() + ent->d_name << "/\">" << ent->d_name << "/</a></li>";
 			else
-				_dynContBuffer << "<li><a href=\"" << _request.directory() + ent->d_name << "\">" << ent->d_name << "</a></li>";
+				ss << "<li><a href=\"" << _request.directory() + ent->d_name << "\">" << ent->d_name << "</a></li>";
 		}
 		closedir(dir);
 	}
-	_dynContBuffer << "</ul></body></html>";
+	ss << "</ul></body></html>";
+	return ss.str();
 }
 
 std::string DynContent::buildSessionLogPage()

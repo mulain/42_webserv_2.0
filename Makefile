@@ -15,7 +15,10 @@ SRCFILE	=	main.cpp\
 			ConfigFile.cpp\
 			ErrorCode.exception.cpp\
 			NetworkFailure.exception.cpp\
-			Response.cpp\
+			Response.abstractClass.cpp\
+			Response.statusPage.cpp\
+			Response.sendFile.cpp\
+			Response.dynContent.cpp\
 			Server.cpp\
 			webserv.cpp
 SRC		=	$(addprefix src/, $(SRCFILE))

@@ -6,8 +6,6 @@
 class Response
 {
 	public:
-		Response(dynContent, const Request&); // send internal buffer constructor
-		Response(const Response&);
 		virtual ~Response() {};
 
 		Response&			operator=(const Response&);
@@ -16,7 +14,8 @@ class Response
 	
 	protected:
 		Response(const Request&);
-//		bool				sendInternalBuffer(int);
+		Response(const Response&);
+		
 		void				generateSessionLogPage();
 		void				generateDirListingPage();
 		std::string			buildResponseHead();
@@ -28,6 +27,7 @@ class Response
 		size_t				_contentLength;
 		std::string			_contentType;
 		std::stringstream	_sendBuffer;
+		std::streampos		_sendBufPos; // need this for copy constructor because tellg is non const
 };
 
 #endif

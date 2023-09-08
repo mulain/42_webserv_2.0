@@ -6,7 +6,7 @@
 class DynContent: public Response
 {
 	public:
-		DynContent(dynContent, const Request&);
+		DynContent(dynCont, const Request&);
 		DynContent(const DynContent&);
 		~DynContent() {}
 
@@ -15,6 +15,7 @@ class DynContent: public Response
 	
 	private:
 		std::string			buildSessionLogPage();
+		std::string			buildDirListingPage();
 };
 
 #endif

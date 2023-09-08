@@ -127,19 +127,29 @@ void Client::newResponse(int code)
 	std::string userPagePath = _request->statusPagePath(code);
 
 	if (resourceExists(userPagePath))
-		_response = new Response(userPagePath, *_request);
+		_response = new SendFile(userPagePath, *_request);
 	else
 		_response = new StatusPage(code, *_request);
 }
 
-template<typename Arg>
-void Client::newResponse(Arg arg)
+void Client::newResponse(std::string sendPath)
 {
 	ANNOUNCEME
 	if (_response)
 		delete _response;
 	_pollStruct.events = POLLOUT | POLLHUP;
-	_response = new Response(arg, *_request);
+
+	_response = new SendFile(sendPath, *_request);
+}
+
+void Client::newResponse(dynCont contentSelector)
+{
+	ANNOUNCEME
+	if (_response)
+		delete _response;
+	_pollStruct.events = POLLOUT | POLLHUP;
+
+	_response = new DynContent(contentSelector, *_request);
 }
 
 void Client::sendStatusPage(int code)

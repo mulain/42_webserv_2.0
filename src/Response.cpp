@@ -36,7 +36,7 @@ Response::Response(std::string sendPath, const Request& request):
 }
 
 // dynamic content generation constructor (w/o CGI)
-Response::Response(dynContent genContent, const Request& request):
+Response::Response(dynCont genContent, const Request& request):
 	_request(request)
 {
 	sendSelector = &Response::sendInternalBuffer;

@@ -8,7 +8,7 @@ class Response
 	public:
 		Response(int, const Request&); // send a status page
 		Response(std::string, const Request&); // send a file from disk
-		Response(dynContent, const Request&); // generate and send from internal buffer
+		Response(dynCont, const Request&); // generate and send from internal buffer
 		Response(const Response&);
 
 		Response&			operator=(const Response&);

@@ -12,10 +12,10 @@ typedef struct
 	std::string		std_file;
 }	s_locInfo;
 
-typedef enum
+typedef enum dynamicContentSelector
 {
 	dirListing,
 	sessionLog
-}	dynContent;
+}	dynCont;
 
 #endif

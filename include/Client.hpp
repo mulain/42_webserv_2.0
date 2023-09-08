@@ -22,8 +22,8 @@ class Client
 		void	receive();
 		void	newRequest();
 		void	newResponse(int);
-				template<typename Arg>
-		void	newResponse(Arg);
+		void	newResponse(std::string);
+		void	newResponse(dynCont);
 
 		void	handleGet();
 		void	handleGetCGI();
