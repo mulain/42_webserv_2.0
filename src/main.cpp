@@ -12,7 +12,6 @@ int main(int argc, char** argv)
 	
 	while (webserv.poll())
 	{
-		std::cout << "start of main loop controlled by poll" << std::endl;
 		try
 		{
 			webserv.acceptClients();

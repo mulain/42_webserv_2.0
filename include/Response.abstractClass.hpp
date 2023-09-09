@@ -6,7 +6,7 @@
 class Response
 {
 	public:
-		virtual ~Response() {};
+		virtual ~Response() { ANNOUNCEME };
 
 		virtual Response*	clone() const = 0; // when overriding these in derived class, should use "override" even if not necessary. But not cpp98.
 		virtual bool		send(int) = 0;

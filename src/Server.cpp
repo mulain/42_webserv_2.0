@@ -71,7 +71,6 @@ bool Server::poll()
 
 void Server::acceptClients()
 {
-	ANNOUNCEME
 	for (size_t i = 0; i < _bindings.size(); ++i)
 	{
 		if (_bindings[i].fd() != _pollStructs[i].fd)
@@ -103,7 +102,6 @@ void Server::acceptClients()
 
 void Server::handleClients()
 {
-	ANNOUNCEME
 	size_t i = _bindings.size(); // skip listening fds
 	while (i < _pollStructs.size())
 	{
@@ -146,7 +144,6 @@ void Server::handleClients()
 		}
 		++i;
 	}
-	GOODBYE
 }
 
 bool Server::pollhup()
@@ -163,7 +160,7 @@ void Server::closeClient(std::string msg)
 {
 	if (msg.empty())
 		msg = "no information given.";
-	std::cout << "closeClient on fd " << _client->getFd() << ": " << msg << std::endl;
+	std::cout << "Closing Client on fd " << _client->getFd() << ": " << msg << std::endl;
 	close(_client->getFd());
 	
 	_pollStructs.erase(_pollStruct);
@@ -172,7 +169,6 @@ void Server::closeClient(std::string msg)
 
 std::vector<Client>::iterator Server::getClient(int fd)
 {
-	ANNOUNCEME
 	std::vector<Client>::iterator it = _clients.begin();
 	
 	while (it != _clients.end() && it->getFd() != fd)
@@ -217,6 +213,13 @@ void Server::shutdown()
 		std::cout << "Closing socket fd " << it->fd << "." << std::endl;
 		close(it->fd);
 	}
+
+	for (std::vector<Client>::iterator it = _clients.begin(); it != _clients.end(); it = _clients.begin())
+	{
+		std::cout << "Erasing Client on fd " << it->getFd() << "." << std::endl;
+		_clients.erase(it);
+	}
+
 	if (sigInt)
 		exit(EXIT_SUCCESS);
 	exit(EXIT_FAILURE);

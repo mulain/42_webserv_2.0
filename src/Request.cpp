@@ -244,11 +244,12 @@ std::string Request::appendSlash(const std::string& path)
 void Request::whoIsI() const
 {
 	std::stringstream ss;
-	ss << "---------- Request for Client on fd " << _client->getFd() << " ----------";
+	ss	<< "----- Request from Client on fd " << _client->getFd()
+		<< " with session id: " << _sessionID << " -----";
 
 	std::string separator(ss.str().size(), '-');
 
-	std::cout	<< ss.str() << "\n"
+	std::cout	<< "\n" << ss.str() << "\n"
 				<< "host:\t\t" << _host << "\n"
 				<< "active config:\t" << (_activeConfig == _config ? "default config" : "alt config") << "\n"
 				<< "method:\t\t" << _method << "\n"

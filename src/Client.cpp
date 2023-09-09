@@ -10,9 +10,7 @@ Client::Client(const Config& config, pollfd& pollStruct, sockaddr_in address):
 	_append(false),
 	_bytesWritten(0),
 	_childLaunched(false)
-{
-	ANNOUNCEME
-}
+{}
 
 Client::Client(const Client& src):
 	_config(src._config),
@@ -32,8 +30,7 @@ Client::~Client()
 
 Client& Client::operator=(const Client& src)
 {
-	std::cout << "Client = operator" <<std::endl;
-	
+	std::cout << "Client operator = on fd " << src.getFd() << std::endl;
 	if (src._request != NULL)
 		_request = new Request(*src._request);
 	else
@@ -61,7 +58,7 @@ Client& Client::operator=(const Client& src)
 	_parentToChild[1] = src._parentToChild[1];
 	_childToParent[0] = src._childToParent[0];
 	_childToParent[1] = src._childToParent[1];
-	GOODBYE
+
 	return *this;
 }
 
@@ -142,7 +139,6 @@ void Client::newResponse(std::string sendPath)
 	_pollStruct.events = POLLOUT | POLLHUP;
 
 	_response = new SendFile(sendPath, *_request);
-	std::cout << "return from making newResponse SendFile" << std::endl;
 }
 
 void Client::newResponse(dynCont contentSelector)

@@ -6,11 +6,12 @@ SendFile::SendFile(std::string sendPath, const Request& request):
 	_responseHeadIncomplete(true),
 	_filePosition(0)
 {
-	ANNOUNCEME
 	_code = 200;
 	_contentLength = fileSize(sendPath);
 	_contentType = getMimeType(sendPath);
 	_sendBuffer	<< buildResponseHead();
+	std::cout << _sendBuffer.str();
+	std::cout << _sendBuffer << std::endl;
 }
 
 SendFile::SendFile(const SendFile& src):
@@ -22,6 +23,7 @@ SendFile::SendFile(const SendFile& src):
 
 Response* SendFile::clone() const
 {
+	ANNOUNCEME
 	return new SendFile(*this);
 }
 
@@ -30,8 +32,10 @@ bool SendFile::send(int fd)
 	ANNOUNCEME
 	if (_responseHeadIncomplete)
 	{
-		_responseHeadIncomplete = sendInternalBuffer(fd);
 		printResponseHead(fd);
+	std::cout << _sendBuffer << std::endl;
+
+		_responseHeadIncomplete = sendInternalBuffer(fd);
 		return true;
 	}
 
