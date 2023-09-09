@@ -7,7 +7,7 @@ ConfigFile::ConfigFile(const char* configPath)
 	setMIMEtypes();
 	
 	while (!configData.empty())
-		_configs.push_back(Config(getConfigElement(configData), &_mimeTypes));
+		_configs.push_back(Config(getConfigElement(configData), _mimeTypes));
 
 	if (_configs.empty())
 		throw std::runtime_error(E_CF_NOSERVER);
@@ -24,9 +24,9 @@ ConfigFile::ConfigFile(const char* configPath)
 	std::cout << I_CF_CONFIGIMPORT << std::endl;
 }
 
-const std::vector<Config>* ConfigFile::getConfigs() const
+std::vector<Config> ConfigFile::getConfigs() const
 {
-	return &_configs;
+	return _configs;
 }
 
 std::string ConfigFile::loadFile(const char* path)

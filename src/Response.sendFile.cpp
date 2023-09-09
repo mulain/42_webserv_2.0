@@ -11,7 +11,6 @@ SendFile::SendFile(std::string sendPath, const Request& request):
 	_contentLength = fileSize(sendPath);
 	_contentType = getMimeType(sendPath);
 	_sendBuffer	<< buildResponseHead();
-	std::cout << "SendFile Constructor:\n" << _sendBuffer.str() << std::endl;
 }
 
 SendFile::SendFile(const SendFile& src):
@@ -32,6 +31,7 @@ bool SendFile::send(int fd)
 	if (_responseHeadIncomplete)
 	{
 		_responseHeadIncomplete = sendInternalBuffer(fd);
+		printResponseHead(fd);
 		return true;
 	}
 
@@ -48,19 +48,15 @@ bool SendFile::send(int fd)
 	fileStream.seekg(_filePosition);
 	fileStream.read(buffer, SEND_CHUNK_SIZE);
 
-	if (::send(fd, buffer, fileStream.gcount(), 0) <= 0)
-	{
-		fileStream.close();
+	int bytesSent = ::send(fd, buffer, fileStream.gcount(), 0);
+	fileStream.close();
+	
+	if (bytesSent <= 0)
 		throw NetworkFailure(__FUNCTION__);
-	}
 	
 	if (fileStream.eof())
-	{
-		fileStream.close();
 		return false;
-	}
 	
 	_filePosition = fileStream.tellg();
-	fileStream.close();
 	return true;
 }

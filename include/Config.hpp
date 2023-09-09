@@ -6,7 +6,7 @@
 class Config
 {
 	public:
-		Config(std::string, const std::map<std::string, std::string>*);
+		Config(std::string, const std::map<std::string, std::string>&);
 
 		void										whoIsI() const;
 		void										addAltConfig(const Config&);
@@ -50,7 +50,7 @@ class Config
 		std::map<std::string, s_locInfo>						_locations;
 		std::map<std::string, std::string>						_cgiPaths;
 		std::vector<Config>										_altConfigs;
-		const std::map<std::string, std::string>*				_mimeTypes;
+		std::map<std::string, std::string>						_mimeTypes;
 		std::map<std::string, void(Config::*)(std::string&)>	_functionMap;
 };
 

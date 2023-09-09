@@ -10,7 +10,9 @@ Client::Client(const Config& config, pollfd& pollStruct, sockaddr_in address):
 	_append(false),
 	_bytesWritten(0),
 	_childLaunched(false)
-{}
+{
+	ANNOUNCEME
+}
 
 Client::Client(const Client& src):
 	_config(src._config),
@@ -36,10 +38,12 @@ Client& Client::operator=(const Client& src)
 		_request = new Request(*src._request);
 	else
 		_request = NULL;
+	
 	if (src._response != NULL)
-		_response = _response->clone();
+		_response = src._response->clone();
 	else
 		_response = NULL;
+	
 	_fd = src._fd;
 	_address = src._address;
 	_buffer = src._buffer;
@@ -57,6 +61,7 @@ Client& Client::operator=(const Client& src)
 	_parentToChild[1] = src._parentToChild[1];
 	_childToParent[0] = src._childToParent[0];
 	_childToParent[1] = src._childToParent[1];
+	GOODBYE
 	return *this;
 }
 
@@ -82,7 +87,6 @@ void Client::incomingData()
 	}
 	else if (_request->method() == DELETE)
 		handleDelete();
-	GOODBYE
 }
 
 void Client::receive()

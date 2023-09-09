@@ -1,6 +1,6 @@
 #include "webserv.hpp"
 
-Config::Config(std::string configStr, const std::map<std::string, std::string>* mimeTypes):
+Config::Config(std::string configStr, const std::map<std::string, std::string>& mimeTypes):
 	_mimeTypes(mimeTypes)
 {
 	std::string	instruction, key;
@@ -97,7 +97,7 @@ const std::map<std::string, s_locInfo>* Config::getLocations() const { return &_
 
 const std::map<std::string, std::string>* Config::getCgiPaths() const { return &_cgiPaths; }
 
-const std::map<std::string, std::string>* Config::getMIMETypes() const { return _mimeTypes; }
+const std::map<std::string, std::string>* Config::getMIMETypes() const { return &_mimeTypes; }
 
 const std::vector<Config>& Config::getAltConfigs() const { return _altConfigs; }
 

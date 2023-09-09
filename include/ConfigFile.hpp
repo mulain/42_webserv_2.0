@@ -8,7 +8,7 @@ class ConfigFile
 	public:
 		ConfigFile(const char*);
 
-		const std::vector<Config>*			getConfigs() const;
+		std::vector<Config>			getConfigs() const;
 
 	private:
 		std::string							loadFile(const char*);

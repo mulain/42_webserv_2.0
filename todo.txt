@@ -3,6 +3,7 @@ readchunk must be bigger than maxheadersize
 
 upload redir > httep redir. test new code in request class
 
+rename networkfailure to terminal client failure or smth and expand information msg from just printing the function
 
 test smal sendchunksize for stringstream end detection
 
@@ -16,3 +17,5 @@ constify everything
 
 
 constify getAltConfigs in config
+
+read all mimetypes from file?

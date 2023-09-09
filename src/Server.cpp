@@ -1,29 +1,21 @@
 # include "webserv.hpp"
 
-Server::Server(int argc, char** argv):
-	_configFile(NULL),
-	_configs(NULL)
+Server::Server(int argc, char** argv)
 {
 	std::string path = "system/configs/example.conf";
 	if (argc > 1)
 		path = argv[1];
-	_configFile = new ConfigFile(path.c_str());
-	_configs = _configFile->getConfigs();
-}
-
-Server::~Server()
-{
-	if (_configFile)
-		delete _configFile;
+	ConfigFile	configFile(path.c_str());
+	_configs = configFile.getConfigs();
 }
 
 void Server::launchBindings()
 {
-	for (size_t i = 0; i < _configs->size(); ++i)
+	for (size_t i = 0; i < _configs.size(); ++i)
 	{
 		try
 		{
-			bindListeningSocket((*_configs)[i]);
+			bindListeningSocket((_configs)[i]);
 		}
 		catch (const std::exception& e)
 		{
@@ -79,6 +71,7 @@ bool Server::poll()
 
 void Server::acceptClients()
 {
+	ANNOUNCEME
 	for (size_t i = 0; i < _bindings.size(); ++i)
 	{
 		if (_bindings[i].fd() != _pollStructs[i].fd)
@@ -103,7 +96,7 @@ void Server::acceptClients()
 				closeFdAndThrow(new_sock);
 
 			addPollStruct(new_sock, POLLIN | POLLHUP);
-			_clients.push_back(Client((*_configs)[i], _pollStructs.back(), addr));
+			_clients.push_back(Client(_configs[i], _pollStructs.back(), addr));
 		}
 	}
 }
@@ -132,8 +125,8 @@ void Server::handleClients()
 					continue;
 				}
 			}
-		}
 
+		}
 		catch (const NetworkFailure& e)
 		{
 			std::cerr << e.what() << std::endl;
@@ -153,6 +146,7 @@ void Server::handleClients()
 		}
 		++i;
 	}
+	GOODBYE
 }
 
 bool Server::pollhup()
@@ -178,6 +172,7 @@ void Server::closeClient(std::string msg)
 
 std::vector<Client>::iterator Server::getClient(int fd)
 {
+	ANNOUNCEME
 	std::vector<Client>::iterator it = _clients.begin();
 	
 	while (it != _clients.end() && it->getFd() != fd)

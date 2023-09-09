@@ -22,6 +22,19 @@ Response& Response::operator=(const Response& src)
 	return *this;
 }
 
+void Response::printResponseHead(int fd)
+{
+	std::string			responseHead = _sendBuffer.str().substr(0, _sendBuffer.str().find("\r\n\r\n"));
+	std::stringstream	ss;
+
+	ss << "---------- Response-head for Client on fd " << fd << " ----------";
+	std::string	separator(ss.str().size(), '-');
+
+	std::cout	<< ss.str() << "\n"
+				<< responseHead << "\n"
+				<< separator << std::endl;
+}
+
 bool Response::sendInternalBuffer(int fd)
 {
 	char	buffer[SEND_CHUNK_SIZE];
