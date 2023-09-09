@@ -1,10 +1,11 @@
 #include "webserv.hpp"
 
-volatile sig_atomic_t sigInt = 0;
+volatile sig_atomic_t signum = 0;
 
 int main(int argc, char** argv)
 {
 	std::signal(SIGINT, sigHandler);
+	std::signal(SIGTERM, sigHandler);
 	
 	Server webserv(argc, argv);
 	

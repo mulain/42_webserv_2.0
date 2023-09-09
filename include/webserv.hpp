@@ -55,7 +55,7 @@ class Server;
 # include "Server.hpp"
 
 // global vars
-extern volatile sig_atomic_t sigInt;
+extern volatile sig_atomic_t signum;
 
 // Captures SIGINT and sets the corresponding global variable to true.
 void sigHandler(int);

@@ -2,8 +2,8 @@
 
 void sigHandler(int sig)
 {
-	if (sig == SIGINT) // can only be SIGINT but nicer than voiding it
-		sigInt = 1;
+	if (sig == SIGINT || sig == SIGTERM) // can only be these, but nicer than voiding
+		signum = 1;
 }
 
 bool isAlnumStr(const std::string& input)

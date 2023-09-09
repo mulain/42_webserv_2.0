@@ -63,10 +63,10 @@ bool Server::poll()
 {
 	if (::poll(_pollStructs.data(), _pollStructs.size(), -1) == -1)
 	{
-		if (!sigInt)
+		if (!signum)
 			perror(__FUNCTION__);
 	}
-	if (sigInt)
+	if (signum)
 		return false;
 	return true;
 }
@@ -208,14 +208,4 @@ void Server::shutdown()
 		std::cout << "Closing socket fd " << it->fd << "." << std::endl;
 		close(it->fd);
 	}
-
-	while (!_clients.empty())
-	{
-		std::cout << "Erasing Client on fd " << _clients.begin()->getFd() << "." << std::endl;
-		_clients.erase(_clients.begin());
-	}
-
-/* 	if (sigInt)
-		exit(EXIT_SUCCESS);
-	exit(EXIT_FAILURE); */
 }
