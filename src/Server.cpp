@@ -5,7 +5,9 @@ Server::Server(int argc, char** argv)
 	std::string path = "system/configs/example.conf";
 	if (argc > 1)
 		path = argv[1];
+	
 	ConfigFile	configFile(path.c_str());
+	
 	_configs = configFile.getConfigs();
 }
 
@@ -22,7 +24,7 @@ void Server::launchBindings()
 			std::cerr << e.what() << std::endl;
 		}
 	}
-	if (_bindings.size() == 0)
+	if (_bindings.empty())
 	{
 		std::cerr << E_S_NOBINDINGS << std::endl;
 		shutdown();
@@ -213,7 +215,7 @@ void Server::shutdown()
 		_clients.erase(_clients.begin());
 	}
 
-	if (sigInt)
+/* 	if (sigInt)
 		exit(EXIT_SUCCESS);
-	exit(EXIT_FAILURE);
+	exit(EXIT_FAILURE); */
 }

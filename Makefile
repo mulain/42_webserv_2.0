@@ -10,7 +10,7 @@ RESET	=	\033[0m
 SRCFILE	=	main.cpp\
 			$(addprefix exceptions/, ErrorCode.exception.cpp CloseConnection.exception.cpp)\
 			$(addprefix Response/, A_Response.cpp DynContent.Response.cpp SendFile.Response.cpp)\
-			$(addprefix setup/, Config.cpp, ConfigFile.cpp)\
+			$(addprefix setup/, Config.cpp ConfigFile.cpp)\
 			Binding.cpp\
 			Request.cpp\
 			Client.cpp\
@@ -28,6 +28,7 @@ $(NAME): $(OBJ)
 obj/%.o: src/%.cpp
 	@mkdir -p obj/exceptions
 	@mkdir -p obj/Response
+	@mkdir -p obj/setup
 	$(CC) $(FLAGS) -c $< -o $@
 
 clean:
