@@ -75,7 +75,7 @@ void Config::setFunctionMap()
 	_functionMap[CGITITLE] = &Config::parseCgiPaths;
 }
 
-std::vector<std::string> Config::getNames() const { return _names; }
+const std::vector<std::string>& Config::getNames() const { return _names; }
 
 in_addr_t Config::getHost() const { return _host; }
 
@@ -99,7 +99,7 @@ const std::map<std::string, std::string>* Config::getCgiPaths() const { return &
 
 const std::map<std::string, std::string>* Config::getMIMETypes() const { return _mimeTypes; }
 
-std::vector<Config> Config::getAltConfigs() const { return _altConfigs; }
+const std::vector<Config>& Config::getAltConfigs() const { return _altConfigs; }
 
 void Config::parseNames(std::string& input)
 {
@@ -133,9 +133,12 @@ void Config::parsePort(std::string& input)
 {
 	if (input.find_first_not_of("0123456789") != std::string::npos)
 		throw std::runtime_error(E_C_PORTINPUT + input + '\n');
+	
 	_port = (uint16_t)atoi(input.c_str());
+	
 	if (_port > (uint16_t)65534)
 		throw std::runtime_error(E_C_PORTVAL + input + '\n');
+	
 	_port = htons(_port);
 
 }
@@ -144,6 +147,7 @@ void Config::parseRoot(std::string& input)
 {
 	if (!isAlnumStrPlus(input, "._-/"))
 		throw std::runtime_error(E_C_ROOTINPUT + input + '\n');
+	
 	_root = input;
 
 	if (*(_root.end() - 1) != '/')
@@ -166,8 +170,11 @@ void Config::parseClientMaxBody(std::string& input)
 {
 	if (input.find_first_not_of("0123456789") != std::string::npos)
 			throw std::runtime_error(E_C_MAXCLBODINPUT + input + '\n');
-	std::istringstream iss(input);
+
+	std::istringstream	iss(input);
+	
 	iss >> _clientMaxBody;
+	
 	if (_clientMaxBody > (unsigned long)MAX_MAXCLIENTBODY)
 		throw std::runtime_error(E_C_MAXCLBODHIGH + input + '\n');
 }
@@ -176,7 +183,9 @@ void Config::parseMaxConnections(std::string& input)
 {
 	if (input.find_first_not_of("0123456789") != std::string::npos)
 			throw std::runtime_error(E_C_MAXCONNINPUT + input + '\n');
+	
 	_maxConnections = atoi(input.c_str());
+	
 	if (_maxConnections > MAX_MAXCONNECTIONS)
 		throw std::runtime_error(E_C_MAXCONNVAL + input + '\n');
 }
@@ -185,6 +194,7 @@ void Config::parseStandardFile(std::string& input)
 {
 	if (!isAlnumStrPlus(input, "._-/"))
 		throw std::runtime_error(E_C_STDFILEINPUT + input + '\n');
+	
 	_standardFile = input;
 }
 
@@ -226,6 +236,7 @@ void Config::parseLocations(std::string& locationElement)
 	s_locInfo									locInfo;
 	
 	path = splitEraseTrimChars(locationElement, WHITESPACE);
+	
 	if (*(path.end() - 1) != '/')
 			std::cerr << I_C_NONDIRPATH << path << std::endl;
 
