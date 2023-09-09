@@ -6,7 +6,7 @@
 class SendFile: public Response
 {
 	public:
-		SendFile(std::string, int, const Request&);
+		SendFile(int, std::string, const Request&);
 		SendFile(const SendFile&);
 		~SendFile() {}
 

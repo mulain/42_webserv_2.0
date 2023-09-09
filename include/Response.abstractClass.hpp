@@ -16,7 +16,7 @@ class Response
 		Response(const Response&);
 		
 		Response&			operator=(const Response&);
-		void				printResponseHead(int);
+		void				whoIsI(int);
 		bool				sendInternalBuffer(int);
 		std::string			buildResponseHead();
 		std::string			getMimeType(const std::string&);

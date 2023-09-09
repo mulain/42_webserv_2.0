@@ -1,6 +1,6 @@
 #include "webserv.hpp"
 
-SendFile::SendFile(std::string sendPath, int code, const Request& request):
+SendFile::SendFile(int code, std::string sendPath, const Request& request):
 	Response(request),
 	_sendPath(sendPath),
 	_responseHeadIncomplete(true),
@@ -28,7 +28,7 @@ bool SendFile::send(int fd)
 {
 	if (_responseHeadIncomplete)
 	{
-		printResponseHead(fd);
+		whoIsI(fd);
 		_responseHeadIncomplete = sendInternalBuffer(fd);
 		return true;
 	}

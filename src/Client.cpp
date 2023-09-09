@@ -126,7 +126,7 @@ void Client::newResponse(int code)
 	std::string userPagePath = _request->statusPagePath(code);
 
 	if (resourceExists(userPagePath))
-		_response = new SendFile(userPagePath, *_request);
+		_response = new SendFile(code, userPagePath, *_request);
 	else
 		_response = new StatusPage(code, *_request);
 }
@@ -138,7 +138,7 @@ void Client::newResponse(std::string sendPath)
 	
 	_pollStruct.events = POLLOUT | POLLHUP;
 
-	_response = new SendFile(sendPath, *_request);
+	_response = new SendFile(200, sendPath, *_request);
 }
 
 void Client::newResponse(dynCont contentSelector)

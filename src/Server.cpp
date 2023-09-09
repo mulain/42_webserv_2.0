@@ -160,7 +160,7 @@ void Server::closeClient(std::string msg)
 {
 	if (msg.empty())
 		msg = "no information given.";
-	std::cout << "Closing Client on fd " << _client->getFd() << ": " << msg << std::endl;
+	std::cout << "\nClosing Client on fd " << _client->getFd() << ": " << msg << std::endl;
 	close(_client->getFd());
 	
 	_pollStructs.erase(_pollStruct);

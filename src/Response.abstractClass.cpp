@@ -23,7 +23,7 @@ Response& Response::operator=(const Response& src)
 	return *this;
 }
 
-void Response::printResponseHead(int fd)
+void Response::whoIsI(int fd)
 {
 	std::string			responseHead = _sendBuffer.str().substr(0, _sendBuffer.str().find("\r\n\r\n"));
 	std::stringstream	ss;
@@ -31,7 +31,7 @@ void Response::printResponseHead(int fd)
 	ss << "---------- Response-head for Client on fd " << fd << " ----------";
 	std::string	separator(ss.str().size(), '-');
 
-	std::cout	<< ss.str() << "\n"
+	std::cout	<< "\n" << ss.str() << "\n"
 				<< responseHead << "\n"
 				<< separator << std::endl;
 }
