@@ -17,7 +17,6 @@ SRCFILE	=	main.cpp\
 			NetworkFailure.exception.cpp\
 			Response.abstractClass.cpp\
 			Response.sendFile.cpp\
-			Response.statusPage.cpp\
 			Response.dynContent.cpp\
 			Server.cpp\
 			webserv.cpp

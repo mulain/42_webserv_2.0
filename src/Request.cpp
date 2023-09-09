@@ -4,7 +4,9 @@ Request::Request(std::string& bufferRef, const Config& config, const Client& cli
 	buffer(&bufferRef), // non const buffer from Client
 	_config(&config),
 	_activeConfig(&config),
-	_client(&client)
+	_client(&client),
+	_cgiRequest(false),
+	_internalScript(no)
 {}
 
 Request::Request(const Request& src)
@@ -31,6 +33,7 @@ Request& Request::operator=(const Request& src)
 	_directory = src._directory;
 	_file = src._file;
 	_cgiRequest = src._cgiRequest;
+	_internalScript = src._internalScript;
 	_setCookie = src._setCookie;
 	_standardFile = src._standardFile;
 	_updatedDirectory = src._updatedDirectory;
@@ -185,9 +188,18 @@ void Request::updateVars()
 {	
 	std::string extension = fileExtension(_file);
 
-	if (_activeConfig->getCgiPaths()->find(extension) == _activeConfig->getCgiPaths()->end())
-		_cgiRequest = false;
-	else
+	if (extension == ".shmang")
+	{
+		if (_file == "sessionLog.shmang")
+			_internalScript = sessionLog;
+		/*
+		else if (_file == "anotherDynamicContent.shmang")
+			_internalScript = anotherDynCont;
+		...
+		*/
+		
+	}
+	else if (_activeConfig->getCgiPaths()->find(extension) != _activeConfig->getCgiPaths()->end())
 	{
 		_cgiExecPath = _activeConfig->getCgiPaths()->find(extension)->second;
 		_cgiRequest = true;
@@ -303,6 +315,8 @@ bool Request::dirListing() const
 }
 
 bool Request::cgiRequest() const { return _cgiRequest; }
+
+dynCont Request::internalScript() const { return _internalScript; }
 
 bool Request::setCookie() const { return _setCookie; }
 

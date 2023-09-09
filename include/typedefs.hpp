@@ -14,6 +14,8 @@ typedef struct
 
 typedef enum dynamicContentSelector
 {
+	no,
+	statusPage,
 	dirListing,
 	sessionLog
 }	dynCont;

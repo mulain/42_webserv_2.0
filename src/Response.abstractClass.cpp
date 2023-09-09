@@ -2,6 +2,7 @@
 
 Response::Response(const Request& request):
 	_request(request),
+	_code(0),
 	_sendBufPos(0)
 {}
 

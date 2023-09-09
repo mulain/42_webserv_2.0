@@ -27,6 +27,8 @@ class Request
 		std::string											file() const;
 		bool												dirListing() const;
 		bool												cgiRequest() const;
+		dynCont												internalScript() const;
+
 		bool												setCookie() const;
 		std::string											sessionID() const;
 		std::string											standardFile() const;
@@ -64,6 +66,7 @@ class Request
 		std::string											_directory;
 		std::string											_file;
 		bool												_cgiRequest;
+		dynCont												_internalScript;
 		bool												_setCookie;
 		std::string											_standardFile;
 		std::string											_updatedDirectory;

@@ -67,7 +67,9 @@ void Client::incomingData()
 	if (!_request)
 		newRequest();
 	// maybe handle cgi partition here
-	if (_request->method() == GET)
+	if (_request->internalScript())
+		newResponse(_request->internalScript());
+	else if (_request->method() == GET)
 	{
 		if (_request->cgiRequest())
 			handleGetCGI(); // shmangidy
@@ -128,7 +130,7 @@ void Client::newResponse(int code)
 	if (resourceExists(userPagePath))
 		_response = new SendFile(code, userPagePath, *_request);
 	else
-		_response = new StatusPage(code, *_request);
+		_response = new DynContent(code, statusPage, *_request);
 }
 
 void Client::newResponse(std::string sendPath)
@@ -148,7 +150,7 @@ void Client::newResponse(dynCont contentSelector)
 	
 	_pollStruct.events = POLLOUT | POLLHUP;
 
-	_response = new DynContent(contentSelector, *_request);
+	_response = new DynContent(200, contentSelector, *_request);
 }
 
 void Client::sendStatusPage(int code)

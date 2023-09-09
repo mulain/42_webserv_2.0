@@ -1,12 +1,16 @@
 #include "webserv.hpp"
 
-DynContent::DynContent(dynCont contentSelector, const Request& request):
+DynContent::DynContent(int code, dynCont contentSelector, const Request& request):
 	Response(request)
 {
 	std::string responseBody;
 	
+	_code = code;
 	switch (contentSelector)
 	{
+		case statusPage:
+			responseBody = buildStatusPage();
+			break;
 		case dirListing:
 			responseBody = buildDirListingPage();
 			break;
@@ -16,7 +20,6 @@ DynContent::DynContent(dynCont contentSelector, const Request& request):
 		default:
 			throw (ErrorCode(500, __FUNCTION__));
 	}
-	_code = 200;
 	_contentLength = responseBody.size();
 	_contentType = getMimeType(".html");
 	_sendBuffer	<< buildResponseHead();
@@ -38,6 +41,26 @@ bool DynContent::send(int fd)
 Response* DynContent::clone() const
 {
 	return new DynContent(*this);
+}
+
+std::string DynContent::buildStatusPage()
+{
+	std::string 		httpMsg = getHttpMsg(_code);
+	std::stringstream	ss;
+
+	ss	<< "<!DOCTYPE html><html><head>\n"
+		<< "<title>webserv - " << _code << ": " << httpMsg << "</title>\n"
+		<< "<style>\n"
+		<< "body {background-color: black; color: white; font-family: Arial, sans-serif; margin: 0; padding: 5% 0 0 0; text-align: center;}\n"
+		<< "h1 {font-size: 42px;}\n"
+		<< "p {font-size: 16px; line-height: 1.5;}\n"
+		<< "</style></head>\n"
+		<< "<body>\n"
+		<< "<h1>" << _code << ": " << httpMsg << "</h1>\n"
+		<< "<img style=\"margin-left: auto;\" src=\"https://http.cat/" << _code << "\" alt=\"" << httpMsg << "\">\n"
+		<< "</body>\n"
+		<< "</html>\n";
+	return ss.str();
 }
 
 std::string DynContent::buildDirListingPage()
