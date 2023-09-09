@@ -11,3 +11,4 @@ Main points:
 - Implement directory listing
 - Implement http redirection
 - Implement GET POST and DELETE methods
+- Implement basic cookie
