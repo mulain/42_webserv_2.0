@@ -1,5 +1,5 @@
-#ifndef RESPONSE_ABSTRACT_HPP
-# define RESPONSE_ABSTRACT_HPP
+#ifndef A_RESPONSE_HPP
+# define A_RESPONSE_HPP
 
 # include "webserv.hpp"
 

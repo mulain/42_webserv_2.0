@@ -1,4 +1,4 @@
-#include "../include/webserv.hpp"
+#include "webserv.hpp"
 
 Client::Client(const Config& config, pollfd& pollStruct, sockaddr_in address):
 	_config(config),

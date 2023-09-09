@@ -1,5 +1,5 @@
-#ifndef RESPONSE_DIRLISTING_HPP
-# define RESPONSE_DIRLISTING_HPP
+#ifndef DYNCONTENT_RESPONSE_HPP
+# define DYNCONTENT_RESPONSE_HPP
 
 # include "webserv.hpp"
 

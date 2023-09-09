@@ -19,6 +19,7 @@ class Server
 		
 		void							bindListeningSocket(const Config&);
 		void							closeClient(std::string);
+		void							closeFdAndThrow(int);
 		std::vector<Client>::iterator	getClient(int);
 		std::vector<pollfd>::iterator	getPollStruct(int fd);
 		void							addPollStruct(int fd, short flags);

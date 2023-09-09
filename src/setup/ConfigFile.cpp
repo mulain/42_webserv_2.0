@@ -51,7 +51,7 @@ std::string ConfigFile::loadFile(const char* path)
 
 	infile.close();
 	line = buffer.str();
-	trim(line);
+	trimWhitespace(line);
 	return line;
 }
 

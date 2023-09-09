@@ -129,7 +129,7 @@ void Request::trackSession()
 	
 	if (logFile)
 	{
-		logFile << currentTime() << "\t" << _client->getAddr() << "\t" << _method << " " << _URL << "\n";
+		logFile << currentTimeCPP98() << "\t" << _client->getAddr() << "\t" << _method << " " << _URL << "\n";
 		logFile.close();
 	}
 	else
@@ -142,7 +142,7 @@ void Request::trackSession()
 
 void Request::selectConfig()
 {
-	if (_host.empty() || stringInVec(_host, _config->getNames()))
+	if (_host.empty() || isStringInVec(_host, _config->getNames()))
 	{
 		std::cout << "host '" << _host << "' belongs to default config." << std::endl;
 		_activeConfig = _config;
@@ -150,7 +150,7 @@ void Request::selectConfig()
 	}
 	for (size_t i = 0; i < _config->getAltConfigs().size(); ++i)
 	{
-		if (stringInVec(_host, _config->getAltConfigs()[i].getNames()))
+		if (isStringInVec(_host, _config->getAltConfigs()[i].getNames()))
 		{
 			std::cout << "host '" << _host << "' belongs to alternative config #" << i << "." << std::endl;
 			_activeConfig = &_config->getAltConfigs()[i];

@@ -199,6 +199,13 @@ void Server::addPollStruct(int fd, short flags)
 	_pollStructs.push_back(new_pollStruct);
 }
 
+void Server::closeFdAndThrow(int fd)
+{
+	if (fd != -1)
+		close(fd);
+	throw std::runtime_error(strerror(errno));
+}
+
 void Server::shutdown()
 {
 	std::cout << "\nShutdown." << std::endl;

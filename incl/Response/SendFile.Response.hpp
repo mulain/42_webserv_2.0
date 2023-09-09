@@ -1,5 +1,5 @@
-#ifndef RESPONSE_SENDFILE_HPP
-# define RESPONSE_SENDFILE_HPP
+#ifndef SENDFILE_RESPONSE_HPP
+# define SENDFILE_RESPONSE_HPP
 
 # include "webserv.hpp"
 
