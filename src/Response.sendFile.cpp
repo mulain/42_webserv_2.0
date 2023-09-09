@@ -1,17 +1,15 @@
 #include "webserv.hpp"
 
-SendFile::SendFile(std::string sendPath, const Request& request):
+SendFile::SendFile(std::string sendPath, int code, const Request& request):
 	Response(request),
 	_sendPath(sendPath),
 	_responseHeadIncomplete(true),
 	_filePosition(0)
 {
-	_code = 200;
+	_code = code;
 	_contentLength = fileSize(sendPath);
 	_contentType = getMimeType(sendPath);
 	_sendBuffer	<< buildResponseHead();
-	std::cout << _sendBuffer.str();
-	std::cout << _sendBuffer << std::endl;
 }
 
 SendFile::SendFile(const SendFile& src):
@@ -23,18 +21,14 @@ SendFile::SendFile(const SendFile& src):
 
 Response* SendFile::clone() const
 {
-	ANNOUNCEME
 	return new SendFile(*this);
 }
 
 bool SendFile::send(int fd)
 {
-	ANNOUNCEME
 	if (_responseHeadIncomplete)
 	{
 		printResponseHead(fd);
-	std::cout << _sendBuffer << std::endl;
-
 		_responseHeadIncomplete = sendInternalBuffer(fd);
 		return true;
 	}
@@ -52,15 +46,19 @@ bool SendFile::send(int fd)
 	fileStream.seekg(_filePosition);
 	fileStream.read(buffer, SEND_CHUNK_SIZE);
 
-	int bytesSent = ::send(fd, buffer, fileStream.gcount(), 0);
-	fileStream.close();
-	
-	if (bytesSent <= 0)
+	if (::send(fd, buffer, fileStream.gcount(), 0) == -1)
+	{
+		fileStream.close();
 		throw NetworkFailure(__FUNCTION__);
+	}
 	
 	if (fileStream.eof())
+	{
+		fileStream.close();
 		return false;
+	}
 	
 	_filePosition = fileStream.tellg();
+	fileStream.close();
 	return true;
 }

@@ -8,13 +8,7 @@ Response::Response(const Request& request):
 Response::Response(const Response& src):
 	_request(src._request)
 {
-	std::cout << "copy constructor Response Base Class" << std::endl;
 	*this = src;
-	std::cout << "sendbuffer in new response base class" << std::endl;
-	std::cout << "address:" << _sendBuffer << std::endl;
-	std::cout << _sendBuffer.str() << std::endl;
-	
-
 }
 
 Response& Response::operator=(const Response& src)
@@ -26,18 +20,11 @@ Response& Response::operator=(const Response& src)
 	_sendBufPos = src._sendBufPos;
 	_sendBuffer.seekg(_sendBufPos);
 
-	std::cout << "SendBufpos in operator= : " << _sendBufPos << std::endl;
-	std::cout << "source sendbuf: " << src._sendBuffer.str() << std::endl;
-	std::cout << "new copy sendbuf: " << _sendBuffer.str() << std::endl;
-
 	return *this;
 }
 
 void Response::printResponseHead(int fd)
 {
-	std::cout << "sendbuffer address in printresponsehead \n";
-	std::cout << _sendBuffer << std::endl;
-
 	std::string			responseHead = _sendBuffer.str().substr(0, _sendBuffer.str().find("\r\n\r\n"));
 	std::stringstream	ss;
 

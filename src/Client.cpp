@@ -30,7 +30,6 @@ Client::~Client()
 
 Client& Client::operator=(const Client& src)
 {
-	std::cout << "Client operator = on fd " << src.getFd() << std::endl;
 	if (src._request != NULL)
 		_request = new Request(*src._request);
 	else
@@ -98,7 +97,7 @@ void Client::receive()
 void Client::newRequest()
 {
 	_request = new Request(_buffer, _config, *this);
-	_request->process();
+	_request->process(); // has to be separate from constructor because this can throw
 	_request->whoIsI();
 }
 
@@ -121,6 +120,7 @@ void Client::newResponse(int code)
 {
 	if (_response)
 		delete _response;
+	
 	_pollStruct.events = POLLOUT | POLLHUP;
 
 	std::string userPagePath = _request->statusPagePath(code);
@@ -133,9 +133,9 @@ void Client::newResponse(int code)
 
 void Client::newResponse(std::string sendPath)
 {
-	ANNOUNCEME_FD
 	if (_response)
 		delete _response;
+	
 	_pollStruct.events = POLLOUT | POLLHUP;
 
 	_response = new SendFile(sendPath, *_request);
@@ -145,6 +145,7 @@ void Client::newResponse(dynCont contentSelector)
 {
 	if (_response)
 		delete _response;
+	
 	_pollStruct.events = POLLOUT | POLLHUP;
 
 	_response = new DynContent(contentSelector, *_request);
@@ -157,10 +158,6 @@ void Client::sendStatusPage(int code)
 
 bool Client::outgoingData()
 {
-	ANNOUNCEME_FD
-	if (!_response)
-		std::cout << __FUNCTION__ << MMMMMEGAERROR << std::endl;
-	
 	return (_response->send(_fd));
 }
 
