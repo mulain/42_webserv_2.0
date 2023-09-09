@@ -125,12 +125,6 @@ void Server::handleClients()
 			}
 
 		}
-		catch (const NetworkFailure& e)
-		{
-			std::cerr << e.what() << std::endl;
-			closeClient(CLOSE_NWFAIL);
-			continue;
-		}
 		catch (const ErrorCode& e)
 		{
 			std::cerr << e.what() << std::endl;
@@ -138,9 +132,8 @@ void Server::handleClients()
 		}
 		catch (const std::exception& e)
 		{
-			// either catch bad alloc separately or also close client here!
-			// if also close here, then no point in catchin NetWorkFailure separatly either
 			std::cerr << e.what() << std::endl;
+			closeClient(CLOSE_EXCPT);
 		}
 		++i;
 	}
@@ -214,10 +207,10 @@ void Server::shutdown()
 		close(it->fd);
 	}
 
-	for (std::vector<Client>::iterator it = _clients.begin(); it != _clients.end(); it = _clients.begin())
+	while (!_clients.empty())
 	{
-		std::cout << "Erasing Client on fd " << it->getFd() << "." << std::endl;
-		_clients.erase(it);
+		std::cout << "Erasing Client on fd " << _clients.begin()->getFd() << "." << std::endl;
+		_clients.erase(_clients.begin());
 	}
 
 	if (sigInt)

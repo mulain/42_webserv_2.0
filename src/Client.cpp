@@ -92,7 +92,7 @@ void Client::receive()
 	char buffer[RECV_CHUNK_SIZE];
 	int bytesReceived = recv(_fd, buffer, RECV_CHUNK_SIZE, 0);
 	if (bytesReceived <= 0)
-		throw NetworkFailure(__FUNCTION__);
+		throw CloseConnection(__FUNCTION__, E_RECV);
 	_buffer.append(buffer, bytesReceived);
 }
 

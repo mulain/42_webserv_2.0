@@ -21,3 +21,123 @@ constify getAltConfigs in config
 read all mimetypes from file?
 
 in updateVars: make a script subfunction and return early if script = true?
+
+
+missed requests?
+
+pauses at handleGet (continued after i hit refresh, so bad copypaste)
+
+updatedDir:     website/
+query string:
+-------------------------------------------------------------------------
+Announcer: handleGet on fd 4
+
+---------- Response-head for Client on fd 4 ----------
+HTTP/1.1 200 OK
+Server: webserv v0.69
+connection: close
+content-length: 2422
+content-type: text/css
+------------------------------------------------------
+
+Closing Client on fd 4: Done sending data.
+
+----- Request from Client on fd 4 with session id: 5QRWH8PEMH92PW74 -----
+host:           localhost:8080
+active config:  default config
+method:         GET
+URL:            /img/catlockHolmes.png
+dir:            /img/
+file:           catlockHolmes.png
+content-length: 0
+content-type:
+standardfile:   index.html
+dirlisting:     yes
+updatedURL:     website/img/catlockHolmes.png
+updatedDir:     website/img/
+query string:
+-------------------------------------------------------------------------
+Announcer: handleGet on fd 4
+Client termination exception in receive: Error: recv()
+
+Closing Client on fd 4: Network failure / no data received.
+
+
+
+
+Closing Client on fd 4: Done sending data.
+
+----- Request from Client on fd 4 with session id: 5QRWH8PEMH92PW74 -----
+host:           localhost:8080
+active config:  default config
+method:         GET
+URL:            /styles.css
+dir:            /
+file:           styles.css
+content-length: 0
+content-type:
+standardfile:   index.html
+dirlisting:     yes
+updatedURL:     website/styles.css
+updatedDir:     website/
+query string:
+-------------------------------------------------------------------------
+Announcer: handleGet on fd 4
+
+---------- Response-head for Client on fd 4 ----------
+HTTP/1.1 200 OK
+Server: webserv v0.69
+connection: close
+content-length: 2422
+content-type: text/css
+------------------------------------------------------
+
+Closing Client on fd 4: Done sending data.
+
+----- Request from Client on fd 4 with session id: 5QRWH8PEMH92PW74 -----
+host:           localhost:8080
+active config:  default config
+method:         GET
+URL:            /img/catlockHolmes.png
+dir:            /img/
+file:           catlockHolmes.png
+content-length: 0
+content-type:
+standardfile:   index.html
+dirlisting:     yes
+updatedURL:     website/img/catlockHolmes.png
+updatedDir:     website/img/
+query string:
+-------------------------------------------------------------------------
+Announcer: handleGet on fd 4
+
+// after 1 refresh:
+Client termination exception in receive: Error: recv()
+
+
+click on check out dirlisting:
+
+content-length: 707722
+content-type: image/png
+------------------------------------------------------
+
+Closing Client on fd 4: Done sending data.
+
+Closing Client on fd 5: Done sending data.
+
+----- Request from Client on fd 6 with session id: Z7U03YMD67VSV5Y2 -----
+host:           localhost:8080
+active config:  default config
+method:         GET
+URL:            /api/
+dir:            /api/
+file:
+content-length: 0
+content-type:
+standardfile:   index.html
+dirlisting:     yes
+updatedURL:     website/api/
+updatedDir:     website/api/
+query string:
+-------------------------------------------------------------------------
+Announcer: handleGet on fd 6

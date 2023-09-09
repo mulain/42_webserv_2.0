@@ -61,7 +61,7 @@
 // close messages
 # define CLOSE_POLLHUP		"POLLHUP."
 # define CLOSE_NODATA		"No data received."
-# define CLOSE_NWFAIL		"Network failure / no data received."
+# define CLOSE_EXCPT		"CloseConnection exception caught."
 # define CLOSE_DONE			"Done sending data."
 
 // ConfigFile
@@ -96,9 +96,7 @@
 // Server
 # define E_ACCEPT				"Error: Server: accept()"
 # define E_LISTEN				"Error: Server: listen()"
-# define E_RECV					"Error: Server: recv()"
 # define E_READ					"Error: Server: read()"
-# define E_SEND					"Error: Server: send()"
 # define E_WRITE_CHPIPE			"Error: Server: write() (to child pipe)"
 # define E_TEMPFILE				"Error: Server: Could not create temporary file."
 # define E_POSTFILE				"Error: Server: Could not create / open POST file."
@@ -117,5 +115,9 @@
 // Client
 # define E_C_OFSTREAM			"Error: Client: ofstream failed."
 # define E_C_IFSTREAM			"Error: Client: ifstream failed."
+
+// Response
+# define E_SEND					"Error: send()"
+# define E_RECV					"Error: recv()"
 
 #endif

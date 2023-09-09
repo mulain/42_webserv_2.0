@@ -8,16 +8,12 @@ COLOR	=	\033[30m
 RESET	=	\033[0m
 
 SRCFILE	=	main.cpp\
+			$(addprefix exceptions/, ErrorCode.exception.cpp CloseConnection.exception.cpp)\
+			$(addprefix Response/, A_Response.cpp DynContent.Response.cpp SendFile.Response.cpp)\
+			$(addprefix setup/, Config.cpp, ConfigFile.cpp)\
 			Binding.cpp\
 			Request.cpp\
 			Client.cpp\
-			Config.cpp\
-			ConfigFile.cpp\
-			ErrorCode.exception.cpp\
-			NetworkFailure.exception.cpp\
-			Response.abstractClass.cpp\
-			Response.sendFile.cpp\
-			Response.dynContent.cpp\
 			Server.cpp\
 			webserv.cpp
 SRC		=	$(addprefix src/, $(SRCFILE))
@@ -30,7 +26,8 @@ $(NAME): $(OBJ)
 	@echo "$(COLOR)$(NAME) compiled.$(RESET)"
 
 obj/%.o: src/%.cpp
-	@mkdir -p obj/
+	@mkdir -p obj/exceptions
+	@mkdir -p obj/Response
 	$(CC) $(FLAGS) -c $< -o $@
 
 clean:
