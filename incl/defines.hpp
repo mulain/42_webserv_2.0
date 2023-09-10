@@ -9,6 +9,7 @@
 # define ANNOUNCEME_FD	std::cout << "Announcer: " << __FUNCTION__ << " on fd " << getFd() << std::endl;
 # define GOODBYE		std::cout << "Now leaving: " << __FUNCTION__ << std::endl;	
 # define SESSIONID		"sessionid"
+# define MAXSERVERCONNS	1024
 # define MMMMMEGAERROR	"_________________________________________MMMMMULTIFAIL__________________________________________"
 
 // paths
