@@ -2,7 +2,7 @@ NAME	=	webserv
 
 CC		=	c++
 RM		=	rm -rf
-FLAGS	=	-Wall -Wextra -Werror -pedantic -std=c++98 #-fsanitize=address
+FLAGS	=	-Wall -Wextra -Werror -pedantic -std=c++98 -fsanitize=address
 INCLUDE	=	-Iincl -Iincl/exceptions -Iincl/Response -Iincl/setup
 
 COLOR	=	\033[30m

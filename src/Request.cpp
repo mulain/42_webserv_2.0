@@ -39,6 +39,7 @@ Request& Request::operator=(const Request& src)
 	_updatedDirectory = src._updatedDirectory;
 	_updatedURL = src._updatedURL;
 	_cgiExecPath = src._cgiExecPath;
+	
 	return *this;
 }
 
