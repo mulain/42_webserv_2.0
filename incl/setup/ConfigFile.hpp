@@ -12,13 +12,11 @@ class ConfigFile
 
 	private:
 		std::string							loadFile(const char*);
-		void 								setMIMEtypes();
 		std::string							getConfigElement(std::string&);
 		bool								combineSharedNetAddr(const Config&, size_t);
 		bool								sharedNetAddr(const Config&, const Config&);
 		
 		std::vector<Config>					_configs;
-		std::map<std::string, std::string>	_mimeTypes;
 };
 
 #endif

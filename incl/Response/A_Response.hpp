@@ -19,7 +19,6 @@ class Response
 		void				whoIsI(int);
 		bool				sendInternalBuffer(int);
 		std::string			buildResponseHead();
-		std::string			getMimeType(const std::string&);
 		std::string			buildCookie(const std::string&, const std::string&, int, const std::string&);
 		
 		const Request&		_request;

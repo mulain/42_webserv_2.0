@@ -1,10 +1,4 @@
 
 
-constify everything
-
-
-constify getAltConfigs in config
-
-read all mimetypes from file?
 
 cgi

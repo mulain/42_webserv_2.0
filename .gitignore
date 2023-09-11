@@ -1,5 +1,6 @@
 *.o
 *.out
+*.code-workspace
 /obj
 
 webserv

@@ -179,6 +179,15 @@ std::map<std::string, std::string> initMimeTypesMap()
 	return mimeTypes;
 }
 
+std::string getMimeType(const std::string& filePath)
+{
+	std::string	extension = fileExtension(filePath);
+
+	if (mimeTypes.find(extension) == mimeTypes.end())
+		return "application/octet-stream";
+	return mimeTypes[extension];
+}
+
 std::string currentTimeCPP98()
 {
 	time_t		rawtime;

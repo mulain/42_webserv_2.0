@@ -74,16 +74,6 @@ std::string Response::buildResponseHead()
 	return ss.str();
 }
 
-std::string Response::getMimeType(const std::string& filepath)
-{
-	std::string 										extension = fileExtension(filepath);
-	std::map<std::string, std::string>::const_iterator	it = _request.mimeTypes()->find(extension);
-
-	if (it == _request.mimeTypes()->end())
-		return "application/octet-stream";
-	return it->second;
-}
-
 std::string Response::buildCookie(const std::string& key, const std::string& value, int expiration, const std::string& path)
 {
 	std::stringstream cookie;

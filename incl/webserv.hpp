@@ -60,7 +60,8 @@ class Server;
 # include "Server.hpp"
 
 // global vars
-extern volatile sig_atomic_t signum;
+extern volatile sig_atomic_t				signum;
+extern std::map<std::string, std::string>	mimeTypes;
 
 // utils_file.cpp
 bool		resourceExists(const std::string&);
@@ -72,6 +73,7 @@ std::string	fileExtension(const std::string&);
 void								sigHandler(int);
 std::string							getHttpMsg(int);
 std::map<std::string, std::string>	initMimeTypesMap();
+std::string							getMimeType(const std::string&);
 std::string							currentTimeCPP98();
 std::string							generateSessionId();
 

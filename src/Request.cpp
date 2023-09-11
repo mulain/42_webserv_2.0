@@ -354,5 +354,3 @@ std::string Request::statusPagePath(int code) const
 }
 
 std::string Request::root() const { return _activeConfig->getRoot(); }
-
-const std::map<std::string, std::string>*	Request::mimeTypes() const { return _activeConfig->getMIMETypes(); }

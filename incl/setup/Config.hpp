@@ -6,7 +6,7 @@
 class Config
 {
 	public:
-		Config(std::string, const std::map<std::string, std::string>&);
+		Config(std::string);
 
 		void										whoIsI() const;
 		void										addAltConfig(const Config&);
@@ -21,7 +21,6 @@ class Config
 		const std::map<int, std::string>*			getStatusPagePaths() const;
 		const std::map<std::string, s_locInfo>*		getLocations() const;
 		const std::map<std::string, std::string>*	getCgiPaths() const;
-		const std::map<std::string, std::string>*	getMIMETypes() const;
 		const std::vector<Config>&					getAltConfigs() const;
 
 	private:
@@ -50,7 +49,6 @@ class Config
 		std::map<std::string, s_locInfo>						_locations;
 		std::map<std::string, std::string>						_cgiPaths;
 		std::vector<Config>										_altConfigs;
-		std::map<std::string, std::string>						_mimeTypes;
 		std::map<std::string, void(Config::*)(std::string&)>	_functionMap;
 };
 
