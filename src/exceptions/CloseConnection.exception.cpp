@@ -2,7 +2,7 @@
 
 CloseConnection::CloseConnection(std::string throwingFunction, std::string event)
 {
-	_errorMsg = "Client termination exception in " + throwingFunction +  ": " + event;
+	_errorMsg = "\n" + throwingFunction +  ": " + event;
 }
 
 CloseConnection::~CloseConnection() throw() {}

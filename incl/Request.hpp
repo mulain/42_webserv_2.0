@@ -40,6 +40,7 @@ class Request
 		const std::map<std::string, std::string>*			mimeTypes() const;
 	
 	private:
+		std::string											sayMyName(std::string);
 		void												parseRequestLine();
 		void												parseRequestHeaders();
 		void												handleSessionID();

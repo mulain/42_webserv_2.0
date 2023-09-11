@@ -9,7 +9,7 @@
 # define ANNOUNCEME_FD	std::cout << "Announcer: " << __FUNCTION__ << " on fd " << getFd() << std::endl;
 # define GOODBYE		std::cout << "Now leaving: " << __FUNCTION__ << std::endl;	
 # define SESSIONID		"sessionid"
-# define MAXSERVERCONNS	1024
+# define BABY			__FUNCTION__
 # define MMMMMEGAERROR	"_________________________________________MMMMMULTIFAIL__________________________________________"
 
 // paths
@@ -105,7 +105,6 @@
 # define E_FORK					"Error: Server: fork()."
 # define E_EXECVE				"Error: Server: execve()."
 # define E_DUP2					"Error: Server: dup2()."
-# define E_FCNTL				"Error: Server: fcntl()."
 # define E_CHILD				"Error: Server: child exited with error or was terminated."
 # define E_IFSTREAM				"Error: Server: ifstream object"
 # define E_CHILDTIMEOUT			"Error: Server: child timed out."
@@ -113,12 +112,8 @@
 # define I_CONNECTIONLIMIT		"Info: Server: Connection limit reached."
 # define I_CLOSENODATA			"Info: Server: Connection closed (no data received)."
 
-// Client
-# define E_C_OFSTREAM			"Error: Client: ofstream failed."
-# define E_C_IFSTREAM			"Error: Client: ifstream failed."
-
 // Response
-# define E_SEND					"Error: send()"
-# define E_RECV					"Error: recv()"
+# define E_SEND					"No data sent."
+# define E_RECV					"No data received."
 
 #endif

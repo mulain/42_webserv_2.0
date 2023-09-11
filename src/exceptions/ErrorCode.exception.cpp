@@ -5,8 +5,8 @@ ErrorCode::ErrorCode(int errorCode, std::string throwingFunction):
 {
 	std::stringstream ss;
 	
-	ss << "ErrorCode in " << throwingFunction << ": " << errorCode << " " << getHttpMsg(errorCode);
-	_errorMsg =  ss.str();
+	ss << "\n" << throwingFunction << ": " << errorCode << " " << getHttpMsg(errorCode);
+	_errorMsg = ss.str();
 }
 
 ErrorCode::~ErrorCode() throw() {}

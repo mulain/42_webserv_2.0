@@ -20,6 +20,7 @@ class Client
 		const char*						getAddr() const;
 
 	private:
+		std::string						sayMyName(std::string);
 		void							receive();
 		void							newRequest();
 		void							newResponse(int);

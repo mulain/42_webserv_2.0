@@ -83,13 +83,18 @@ void Client::incomingData(std::vector<pollfd>::iterator pollStruct)
 		handleDelete();
 }
 
+std::string Client::sayMyName(std::string function)
+{
+	return "Client::" + function;
+}
+
 void Client::receive()
 {
 	char	buffer[RECV_CHUNK_SIZE];
 
 	int bytesReceived = recv(_fd, buffer, RECV_CHUNK_SIZE, 0);
 	if (bytesReceived <= 0)
-		throw CloseConnection(__FUNCTION__, E_RECV);
+		throw CloseConnection(sayMyName(BABY), E_RECV);
 	_buffer.append(buffer, bytesReceived);
 }
 
@@ -196,7 +201,7 @@ void Client::handlePost()
 	std::ofstream	outputFile;
 	
 	if (resourceExists(_request->updatedURL()) && !_request->locationInfo()->delete_)
-		throw ErrorCode(409, __FUNCTION__); // if DELETE not allowed and file already exists
+		throw ErrorCode(409, sayMyName(BABY)); // if DELETE not allowed and file already exists
 
 	if (_append)
 		outputFile.open(_request->updatedURL().c_str(), std::ios::binary | std::ios::app);
@@ -209,7 +214,7 @@ void Client::handlePost()
 	if (!outputFile)
 	{
 		outputFile.close();
-		throw ErrorCode(500, __FUNCTION__);
+		throw ErrorCode(500, sayMyName(BABY));
 	}
 
 	outputFile.write(_buffer.c_str(), _buffer.size());
