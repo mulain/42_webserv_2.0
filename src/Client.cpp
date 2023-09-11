@@ -94,7 +94,7 @@ void Client::receive()
 
 	int bytesReceived = recv(_fd, buffer, RECV_CHUNK_SIZE, 0);
 	if (bytesReceived <= 0)
-		throw CloseConnection(sayMyName(BABY), E_RECV);
+		throw CloseConnection(sayMyName(__FUNCTION__), E_RECV);
 	_buffer.append(buffer, bytesReceived);
 }
 
@@ -201,7 +201,7 @@ void Client::handlePost()
 	std::ofstream	outputFile;
 	
 	if (resourceExists(_request->updatedURL()) && !_request->locationInfo()->delete_)
-		throw ErrorCode(409, sayMyName(BABY)); // if DELETE not allowed and file already exists
+		throw ErrorCode(409, sayMyName(__FUNCTION__)); // if DELETE not allowed and file already exists
 
 	if (_append)
 		outputFile.open(_request->updatedURL().c_str(), std::ios::binary | std::ios::app);
@@ -214,7 +214,7 @@ void Client::handlePost()
 	if (!outputFile)
 	{
 		outputFile.close();
-		throw ErrorCode(500, sayMyName(BABY));
+		throw ErrorCode(500, sayMyName(__FUNCTION__));
 	}
 
 	outputFile.write(_buffer.c_str(), _buffer.size());

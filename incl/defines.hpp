@@ -9,8 +9,6 @@
 # define ANNOUNCEME_FD	std::cout << "Announcer: " << __FUNCTION__ << " on fd " << getFd() << std::endl;
 # define GOODBYE		std::cout << "Now leaving: " << __FUNCTION__ << std::endl;	
 # define SESSIONID		"sessionid"
-# define BABY			__FUNCTION__
-# define MMMMMEGAERROR	"_________________________________________MMMMMULTIFAIL__________________________________________"
 
 // paths
 # define SYS_CGIPAGE		"system/cgi.html"
@@ -24,7 +22,7 @@
 # define SEND_CHUNK_SIZE		8192
 # define MAX_MAXCLIENTBODY		4294967295 //2^32 - 1 -> max unsigned long @ 32 bit
 # define MAX_MAXCONNECTIONS		1000
-# define MAX_HEADERSIZE			8192
+# define MAX_REQHEADSIZE		8192
 
 // configuration element identifiers
 # define SERVER				"server"
@@ -70,6 +68,7 @@
 # define E_CF_ELMNTDECL		"Error: ConfigFile: Invalid element declaration, (only \"server\" allowed): "
 # define E_CF_NOSERVER		"Error: ConfigFile: No valid server configs found."
 # define E_CF_MANYSERVER	"Error: ConfigFile: Too many server configs found. Maximum of 10 allowed."
+# define E_CF_SIZEMISMATCH	"Error: ConfigFile: Receive chunk size must be larger than max request head size."
 
 # define I_CF_CONFIGIMPORT	"Info: ConfigFile: " << _configs.size() << " distinct" << (_configs.size() == 1 ? " Config" : " Configs") <<" extracted from " << configPath << "."
 

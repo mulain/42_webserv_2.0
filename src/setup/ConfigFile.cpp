@@ -5,6 +5,9 @@ ConfigFile::ConfigFile(const char* configPath)
 	std::string	configData = loadFile(configPath);
 	
 	setMIMEtypes();
+
+	if (RECV_CHUNK_SIZE < MAX_REQHEADSIZE)
+		throw std::runtime_error(E_CF_SIZEMISMATCH);
 	
 	while (!configData.empty())
 		_configs.push_back(Config(getConfigElement(configData), _mimeTypes));
