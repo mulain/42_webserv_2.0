@@ -205,7 +205,7 @@ void Request::updateVars()
 		if (_file == "sessionLog.shmang")
 			_internalScript = sessionLog;
 		/*
-		else if (_file == "anotherDynamicContent.shmang")
+		else if (_file == "anotherInternalDynamicContent.shmang")
 			_internalScript = anotherDynCont;
 		...
 		*/

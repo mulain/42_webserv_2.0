@@ -7,6 +7,4 @@ constify getAltConfigs in config
 
 read all mimetypes from file?
 
-
-in updateVars: make a script subfunction and return early if script = true?
-
+cgi
