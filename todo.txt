@@ -20,9 +20,11 @@ constify getAltConfigs in config
 
 read all mimetypes from file?
 
+use pollstruct as iterator in handlecllient loop
+
 in updateVars: make a script subfunction and return early if script = true?
 
-
+remove megaerror
 missed requests?
 
 pauses at handleGet (continued after i hit refresh, so bad copypaste)

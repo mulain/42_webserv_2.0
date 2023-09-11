@@ -6,13 +6,13 @@
 class Client
 {
 	public:
-		Client(const Config&, pollfd&, sockaddr_in);
+		Client(const Config&, int, sockaddr_in);
 		Client(const Client&);
 		~Client();
 		Client& operator=(const Client&);
 
 		void 		whoIsI() const;
-		void		incomingData();
+		void		incomingData(std::vector<pollfd>::iterator);
 		bool		outgoingData();
 		void		sendStatusPage(int); // called by ErrorCode catch
 		int			getFd() const;
@@ -33,11 +33,11 @@ class Client
 
 		std::string					_buffer;
 		const Config&				_config;
-		pollfd&						_pollStruct;
 		Request*					_request;
 		Response*					_response;
 		int							_fd;
 		sockaddr_in					_address;
+		bool						_rdyToSend;
 		
 		// POST
 		bool						_append;

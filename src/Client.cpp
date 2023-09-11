@@ -1,20 +1,19 @@
 #include "webserv.hpp"
 
-Client::Client(const Config& config, pollfd& pollStruct, sockaddr_in address):
+Client::Client(const Config& config, int fd, sockaddr_in address):
 	_config(config),
-	_pollStruct(pollStruct),
 	_request(NULL),
 	_response(NULL),
-	_fd(pollStruct.fd), 
+	_fd(fd), 
 	_address(address),
+	_rdyToSend(false),
 	_append(false),
 	_bytesWritten(0),
 	_childLaunched(false)
 {}
 
 Client::Client(const Client& src):
-	_config(src._config),
-	_pollStruct(src._pollStruct)
+	_config(src._config)
 {
 	*this = src;
 }
@@ -42,6 +41,7 @@ Client& Client::operator=(const Client& src)
 	
 	_fd = src._fd;
 	_address = src._address;
+	_rdyToSend = src._rdyToSend;
 	_buffer = src._buffer;
 	_append = src._append;
 	_bytesWritten = src._bytesWritten;
@@ -61,7 +61,7 @@ Client& Client::operator=(const Client& src)
 	return *this;
 }
 
-void Client::incomingData()
+void Client::incomingData(std::vector<pollfd>::iterator pollStruct)
 {
 	receive();
 	if (!_request)
@@ -85,11 +85,15 @@ void Client::incomingData()
 	}
 	else if (_request->method() == DELETE)
 		handleDelete();
+
+	if (_rdyToSend)
+		pollStruct->events = POLLOUT | POLLHUP;
 }
 
 void Client::receive()
 {
-	char buffer[RECV_CHUNK_SIZE];
+	char	buffer[RECV_CHUNK_SIZE];
+
 	int bytesReceived = recv(_fd, buffer, RECV_CHUNK_SIZE, 0);
 	if (bytesReceived <= 0)
 		throw CloseConnection(__FUNCTION__, E_RECV);
@@ -123,14 +127,14 @@ void Client::newResponse(int code)
 	if (_response)
 		delete _response;
 	
-	_pollStruct.events = POLLOUT | POLLHUP;
-
 	std::string userPagePath = _request->statusPagePath(code);
 
 	if (resourceExists(userPagePath))
 		_response = new SendFile(code, userPagePath, *_request);
 	else
 		_response = new DynContent(code, statusPage, *_request);
+
+	_rdyToSend = true;
 }
 
 void Client::newResponse(std::string sendPath)
@@ -138,19 +142,17 @@ void Client::newResponse(std::string sendPath)
 	if (_response)
 		delete _response;
 	
-	_pollStruct.events = POLLOUT | POLLHUP;
-
 	_response = new SendFile(200, sendPath, *_request);
+	_rdyToSend = true;
 }
 
 void Client::newResponse(dynCont contentSelector)
 {
 	if (_response)
 		delete _response;
-	
-	_pollStruct.events = POLLOUT | POLLHUP;
 
 	_response = new DynContent(200, contentSelector, *_request);
+	_rdyToSend = true;
 }
 
 void Client::sendStatusPage(int code)

@@ -20,18 +20,17 @@ class Server
 		void							bindListeningSocket(const Config&);
 		void							bindError(int, Binding*);
 		void							addPollStruct(int fd, short flags);
-		int								setPollStruct(int fd, short flags);
 		void							acceptError(int);
 		void							closeClient(std::string);
-		std::vector<Client>::iterator	getClient(int);
-		std::vector<pollfd*>::iterator	getPollStruct(int fd);
+		std::vector<Client*>::iterator	getClient(int);
+		std::vector<pollfd>::iterator	getPollStruct(int fd);
 
 		std::vector<Binding*>			_bindings;
-		pollfd 							_pollStructs[MAXSERVERCONNS];
+		std::vector<pollfd>				_pollStructs;
 		std::vector<Config>				_configs;
-		std::vector<Client>				_clients;
+		std::vector<Client*>			_clients;
 		
-		std::vector<Client>::iterator	_client;
+		std::vector<Client*>::iterator	_client;
 		std::vector<pollfd>::iterator	_pollStruct;
 		
 };

@@ -85,7 +85,6 @@ void Server::acceptClients()
 		{
 			sockaddr_in	addr;
 			socklen_t	clientAddrSize = sizeof(addr);
-			int			pollIndex;
 		
 			int new_sock = accept(_pollStructs[i].fd, (sockaddr*)&addr, &clientAddrSize);
 			if (new_sock == -1)
@@ -97,9 +96,8 @@ void Server::acceptClients()
 			if (fcntl(new_sock, F_SETFL, O_NONBLOCK) == -1)
 				acceptError(new_sock);
 
-			if ((pollIndex = setPollStruct(new_sock, POLLIN | POLLHUP)) == -1)
-				acceptError(new_sock);
-			_clients.push_back(Client(_configs[i], _pollStructs[pollIndex], addr));
+			addPollStruct(new_sock, POLLIN | POLLHUP);
+			_clients.push_back(new Client(_configs[i], new_sock, addr));
 		}
 	}
 }
@@ -112,16 +110,17 @@ void Server::handleClients()
 		try
 		{
 			_client = getClient(_pollStructs[i].fd);
-			_pollStruct = getPollStruct(_pollStructs[i].fd); // pollvectorbegin + i
+			//_pollStruct = getPollStruct(_pollStructs[i].fd); // pollvectorbegin + i
+			_pollStruct = _pollStructs.begin() + i;
 
 			if (pollhup())
 				continue;
 
 			if (_pollStruct->revents & POLLIN)
-				_client->incomingData();
+				(*_client)->incomingData(_pollStruct);
 			else if (_pollStruct->revents & POLLOUT)
 			{
-				if(!_client->outgoingData())
+				if(!(*_client)->outgoingData())
 				{
 					closeClient(CLOSE_DONE);
 					continue;
@@ -132,12 +131,13 @@ void Server::handleClients()
 		catch (const ErrorCode& e)
 		{
 			std::cerr << e.what() << std::endl;
-			_client->sendStatusPage(e.getCode());
+			(*_client)->sendStatusPage(e.getCode());
 		}
 		catch (const std::exception& e)
 		{
 			std::cerr << e.what() << std::endl;
 			closeClient(CLOSE_EXCPT);
+			continue;
 		}
 		++i;
 	}
@@ -155,20 +155,21 @@ bool Server::pollhup()
 
 void Server::closeClient(std::string msg)
 {
-	if (msg.empty())
-		msg = "no information given.";
-	std::cout << "\nClosing Client on fd " << _client->getFd() << ": " << msg << std::endl;
-	close(_client->getFd());
+	std::cout << "\nClosing Client on fd " << (*_client)->getFd() << ": " << msg << std::endl;
+	
+	close((*_client)->getFd());
 	
 	_pollStructs.erase(_pollStruct);
+	
+	delete *_client;
 	_clients.erase(_client);
 }
 
-std::vector<Client>::iterator Server::getClient(int fd)
+std::vector<Client*>::iterator Server::getClient(int fd)
 {
-	std::vector<Client>::iterator it = _clients.begin();
+	std::vector<Client*>::iterator it = _clients.begin();
 	
-	while (it != _clients.end() && it->getFd() != fd)
+	while (it != _clients.end() && (*it)->getFd() != fd)
 		++it;
 	if (it == _clients.end())
 	{
@@ -178,11 +179,11 @@ std::vector<Client>::iterator Server::getClient(int fd)
 	return it;
 }
 
-std::vector<pollfd*>::iterator Server::getPollStruct(int fd)
+std::vector<pollfd>::iterator Server::getPollStruct(int fd)
 {
-	std::vector<pollfd*>::iterator it = _pollStructs.begin();
+	std::vector<pollfd>::iterator it = _pollStructs.begin();
 		
-	while (it != _pollStructs.end() && (*it)->fd != fd)
+	while (it != _pollStructs.end() && it->fd != fd)
 		++it;
 	if (it == _pollStructs.end())
 	{
@@ -194,31 +195,13 @@ std::vector<pollfd*>::iterator Server::getPollStruct(int fd)
 
 void Server::addPollStruct(int fd, short flags)
 {
-	pollfd*	newPollStruct = new pollfd;
+	pollfd	newPollStruct;
 	
-	newPollStruct->fd = fd;
-	newPollStruct->events = flags;
-	newPollStruct->revents = 0;
+	newPollStruct.fd = fd;
+	newPollStruct.events = flags;
+	newPollStruct.revents = 0;
 	
 	_pollStructs.push_back(newPollStruct);
-}
-
-int Server::setPollStruct(int fd, short flags)
-{
-	int i = 0;
-	for (; i < MAXSERVERCONNS; ++i)
-	{
-		if (_pollStructs[i].fd == -1)
-			break;
-	}
-	if (i == MAXSERVERCONNS)
-		return -1;
-
-	_pollStructs[i].fd = fd;
-	_pollStructs[i].events = flags;
-	_pollStructs[i].revents = 0;
-	
-	return i;
 }
 
 void Server::bindError(int fd, Binding* newBinding)
@@ -241,21 +224,11 @@ void Server::shutdown()
 	std::cout << "\nShutdown." << std::endl;
 	
 	std::cout << "\nClosing " << _pollStructs.size() << " socket(s):" << std::endl;
-	for (std::vector<pollfd*>::iterator it = _pollStructs.begin(); it != _pollStructs.end(); ++it)
+	for (std::vector<pollfd>::iterator it = _pollStructs.begin(); it != _pollStructs.end(); ++it)
 	{
-		std::cout << "Closing socket fd " << (*it)->fd << "." << std::endl;
-		close((*it)->fd);
+		std::cout << "Closing socket fd " << it->fd << "." << std::endl;
+		close(it->fd);
 	}
-
-	std::cout << "\nDeleting " << _pollStructs.size() << " pollStruct(s):" << std::endl;
-	for (size_t i = 0; !_pollStructs.empty(); ++i)
-	{
-		std::cout << "Deleting pollStruct " << i << "." << std::endl;
-		delete _pollStructs[0];
-		_pollStructs.erase(_pollStructs.begin());
-	}
-
-
 	
 	std::cout << "\nDeleting " << _bindings.size() << " binding(s):" << std::endl;
 	for (size_t i = 0; !_bindings.empty(); ++i)
