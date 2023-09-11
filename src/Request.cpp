@@ -167,9 +167,6 @@ void Request::requestError()
 
 	if (_method != GET && _method != POST && _method != DELETE)
 		throw ErrorCode(501, __FUNCTION__);
-		
-	if (_URL.find("/") == std::string::npos)
-		throw ErrorCode(404, __FUNCTION__);
 	
 	if (!resourceExists(prependRoot(_URL)))
 		throw ErrorCode(404, __FUNCTION__);

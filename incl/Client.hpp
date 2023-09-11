@@ -7,30 +7,30 @@ class Client
 {
 	public:
 		Client(const Config&, int, sockaddr_in);
-		//Client(const Client&);
+		Client(const Client&);
 		~Client();
 		
-		//Client&		operator=(const Client&);
+		Client&							operator=(const Client&);
 
-		void 		whoIsI() const;
-		void		incomingData(std::vector<pollfd>::iterator);
-		bool		outgoingData();
-		void		sendStatusPage(int); // called by ErrorCode catch
-		int			getFd() const;
-		const char*	getAddr() const;
+		void 							whoIsI() const;
+		void							incomingData(std::vector<pollfd>::iterator);
+		bool							outgoingData();
+		void							sendStatusPage(int); // called by ErrorCode catch
+		int								getFd() const;
+		const char*						getAddr() const;
 
 	private:
-		void	receive();
-		void	newRequest();
-		void	newResponse(int);
-		void	newResponse(std::string);
-		void	newResponse(dynCont);
+		void							receive();
+		void							newRequest();
+		void							newResponse(int);
+		void							newResponse(std::string);
+		void							newResponse(dynCont);
 
-		void	handleGet();
-		void	handleGetCGI();
-		void	handleDelete();
-		void	handlePost();
-		void	handlePostCGI();
+		void							handleGet();
+		void							handleGetCGI();
+		void							handleDelete();
+		void							handlePost();
+		void							handlePostCGI();
 
 		std::string						_buffer;
 		const Config&					_config;
