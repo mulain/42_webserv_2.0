@@ -223,11 +223,16 @@ void Server::shutdown()
 		_bindings.erase(_bindings.begin());
 	}
 
-	std::cout << "\nDeleting " << _clients.size() << (_clients.size() == 1 ? " Client:" : " Clients:") << std::endl;
-	for (size_t i = 0; !_clients.empty(); ++i)
+	if (_clients.empty())
+		std::cout << "\nNo Clients connected, nothing to delete." << std::endl;
+	else
 	{
-		std::cout << "\tDeleting Client " << i << "." << std::endl;
-		delete _clients[0];
-		_clients.erase(_clients.begin());
+		std::cout << "\nDeleting " << _clients.size() << (_clients.size() == 1 ? " Client:" : " Clients:") << std::endl;
+		for (size_t i = 0; !_clients.empty(); ++i)
+		{
+			std::cout << "\tDeleting Client " << i << "." << std::endl;
+			delete _clients[0];
+			_clients.erase(_clients.begin());
+		}
 	}
 }

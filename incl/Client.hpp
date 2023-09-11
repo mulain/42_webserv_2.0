@@ -32,29 +32,29 @@ class Client
 		void	handlePost();
 		void	handlePostCGI();
 
-		std::string					_buffer;
-		const Config&				_config;
-		Request*					_request;
-		Response*					_response;
-		int							_fd;
-		sockaddr_in					_address;
-		bool						_rdyToSend;
+		std::string						_buffer;
+		const Config&					_config;
+		Request*						_request;
+		Response*						_response;
+		int								_fd;
+		sockaddr_in						_address;
+		std::vector<pollfd>::iterator	_pollStruct;
 		
 		// POST
-		bool						_append;
-		size_t						_bytesWritten;
+		bool							_append;
+		size_t							_bytesWritten;
 
 		// CGI
-		bool						_childLaunched;
-		time_t						_childBirth;
-		std::string					_cgiExecPath;
-		std::vector<std::string>	_envVec;
-		std::vector<char*>			_env;
-		std::vector<std::string>	_argvVec;
-		std::vector<char*>			_argv;
-		pid_t						_cgiPid;
-		int							_parentToChild[2];
-		int							_childToParent[2];
+		bool							_childLaunched;
+		time_t							_childBirth;
+		std::string						_cgiExecPath;
+		std::vector<std::string>		_envVec;
+		std::vector<char*>				_env;
+		std::vector<std::string>		_argvVec;
+		std::vector<char*>				_argv;
+		pid_t							_cgiPid;
+		int								_parentToChild[2];
+		int								_childToParent[2];
 };
 
 #endif

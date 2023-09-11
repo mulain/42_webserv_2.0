@@ -6,7 +6,6 @@ Client::Client(const Config& config, int fd, sockaddr_in address):
 	_response(NULL),
 	_fd(fd), 
 	_address(address),
-	_rdyToSend(false),
 	_append(false),
 	_bytesWritten(0),
 	_childLaunched(false)
@@ -41,7 +40,6 @@ Client& Client::operator=(const Client& src)
 	
 	_fd = src._fd;
 	_address = src._address;
-	_rdyToSend = src._rdyToSend;
 	_buffer = src._buffer;
 	_append = src._append;
 	_bytesWritten = src._bytesWritten;
@@ -63,6 +61,8 @@ Client& Client::operator=(const Client& src)
 
 void Client::incomingData(std::vector<pollfd>::iterator pollStruct)
 {
+	_pollStruct = pollStruct;
+	
 	receive();
 	if (!_request)
 		newRequest();
@@ -85,9 +85,6 @@ void Client::incomingData(std::vector<pollfd>::iterator pollStruct)
 	}
 	else if (_request->method() == DELETE)
 		handleDelete();
-
-	if (_rdyToSend)
-		pollStruct->events = POLLOUT | POLLHUP;
 }
 
 void Client::receive()
@@ -133,8 +130,7 @@ void Client::newResponse(int code)
 		_response = new File(code, userPagePath, *_request);
 	else
 		_response = new DynContent(code, statusPage, *_request);
-
-	_rdyToSend = true;
+	_pollStruct->events = POLLOUT | POLLHUP;
 }
 
 void Client::newResponse(std::string sendPath)
@@ -143,7 +139,7 @@ void Client::newResponse(std::string sendPath)
 		delete _response;
 	
 	_response = new File(200, sendPath, *_request);
-	_rdyToSend = true;
+	_pollStruct->events = POLLOUT | POLLHUP;
 }
 
 void Client::newResponse(dynCont contentSelector)
@@ -152,7 +148,7 @@ void Client::newResponse(dynCont contentSelector)
 		delete _response;
 
 	_response = new DynContent(200, contentSelector, *_request);
-	_rdyToSend = true;
+	_pollStruct->events = POLLOUT | POLLHUP;
 }
 
 void Client::sendStatusPage(int code)
