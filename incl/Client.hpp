@@ -43,7 +43,7 @@ class Client
 		// POST
 		bool							_append;
 		size_t							_bytesWritten;
-
+ 
 		// CGI
 		bool							_childLaunched;
 		time_t							_childBirth;

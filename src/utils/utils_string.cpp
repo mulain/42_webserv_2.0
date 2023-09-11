@@ -174,11 +174,13 @@ std::string getInstruction(std::string& inputStr)
 
 /*
 Operates on a string ref that contains key-value pairs.
-1st arg is the string ref to operate on.
-2nd is end of key (e.g. "=").
-3rd is end of value and therefore also end of key-value pair (e.g. ";").
-4th is end of region to parse in 1st arg (e.g. "\r\n\r\n"). Pass "" to parse entire 1st arg.
 Erases the parsed region from the string ref.
+-	1st arg is the string ref to operate on.
+-	2nd is end of key (e.g. "=").
+-	3rd is end of value and therefore also end of key-value pair (e.g. ";").
+-	4th is end of region to parse in 1st arg if found at the start of a line (e.g. "\r\n").
+	Pass "" to parse entire 1st arg. This means that an empty line cannot be used to denote the end
+	of the to be parsed region. Could implement passing NULL instead, but not needed for this project.
 */
 std::map<std::string, std::string> parseStrMap(std::string& input, const std::string& endOfKey, const std::string& endOfValue, const std::string& endOfMap)
 {
