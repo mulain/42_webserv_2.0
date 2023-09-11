@@ -110,7 +110,6 @@ void Server::handleClients()
 		try
 		{
 			_client = getClient(_pollStructs[i].fd);
-			//_pollStruct = getPollStruct(_pollStructs[i].fd); // pollvectorbegin + i
 			_pollStruct = _pollStructs.begin() + i;
 
 			if (pollhup())
@@ -179,20 +178,6 @@ std::vector<Client*>::iterator Server::getClient(int fd)
 	return it;
 }
 
-std::vector<pollfd>::iterator Server::getPollStruct(int fd)
-{
-	std::vector<pollfd>::iterator it = _pollStructs.begin();
-		
-	while (it != _pollStructs.end() && it->fd != fd)
-		++it;
-	if (it == _pollStructs.end())
-	{
-		std::cerr << E_S_PSTRUCNOTFOUND << std::endl;
-		throw std::runtime_error(__FUNCTION__);
-	}
-	return it;
-}
-
 void Server::addPollStruct(int fd, short flags)
 {
 	pollfd	newPollStruct;
@@ -223,19 +208,26 @@ void Server::shutdown()
 {
 	std::cout << "\nShutdown." << std::endl;
 	
-	std::cout << "\nClosing " << _pollStructs.size() << " socket(s):" << std::endl;
+	std::cout << "\nClosing " << _pollStructs.size() << (_pollStructs.size() == 1 ? " socket:" : " sockets:") << std::endl;
 	for (std::vector<pollfd>::iterator it = _pollStructs.begin(); it != _pollStructs.end(); ++it)
 	{
-		std::cout << "Closing socket fd " << it->fd << "." << std::endl;
+		std::cout << "\tClosing socket fd " << it->fd << "." << std::endl;
 		close(it->fd);
 	}
 	
-	std::cout << "\nDeleting " << _bindings.size() << " binding(s):" << std::endl;
+	std::cout << "\nDeleting " << _bindings.size() << (_bindings.size() == 1 ? " Binding:" : " Bindings:") << std::endl;
 	for (size_t i = 0; !_bindings.empty(); ++i)
 	{
-		std::cout << "Deleting binding " << i << "." << std::endl;
+		std::cout << "\tDeleting Binding " << i << "." << std::endl;
 		delete _bindings[0];
 		_bindings.erase(_bindings.begin());
 	}
 
+	std::cout << "\nDeleting " << _clients.size() << (_clients.size() == 1 ? " Client:" : " Clients:") << std::endl;
+	for (size_t i = 0; !_clients.empty(); ++i)
+	{
+		std::cout << "\tDeleting Client " << i << "." << std::endl;
+		delete _clients[0];
+		_clients.erase(_clients.begin());
+	}
 }

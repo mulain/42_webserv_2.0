@@ -23,7 +23,6 @@ class Server
 		void							acceptError(int);
 		void							closeClient(std::string);
 		std::vector<Client*>::iterator	getClient(int);
-		std::vector<pollfd>::iterator	getPollStruct(int fd);
 
 		std::vector<Binding*>			_bindings;
 		std::vector<pollfd>				_pollStructs;

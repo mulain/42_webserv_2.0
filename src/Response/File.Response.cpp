@@ -1,6 +1,6 @@
 #include "webserv.hpp"
 
-SendFile::SendFile(int code, std::string sendPath, const Request& request):
+File::File(int code, std::string sendPath, const Request& request):
 	Response(request),
 	_sendPath(sendPath),
 	_responseHeadIncomplete(true),
@@ -12,19 +12,19 @@ SendFile::SendFile(int code, std::string sendPath, const Request& request):
 	_sendBuffer	<< buildResponseHead();
 }
 
-SendFile::SendFile(const SendFile& src):
+File::File(const File& src):
 	Response(src),
 	_sendPath(src._sendPath),
 	_responseHeadIncomplete(src._responseHeadIncomplete),
 	_filePosition(src._filePosition)
 {}
 
-Response* SendFile::clone() const
+Response* File::clone() const
 {
-	return new SendFile(*this);
+	return new File(*this);
 }
 
-bool SendFile::send(int fd)
+bool File::send(int fd)
 {
 	if (_responseHeadIncomplete)
 	{

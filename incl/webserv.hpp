@@ -48,7 +48,7 @@ class Server;
 // Response
 # include "A_Response.hpp"
 # include "DynContent.Response.hpp"
-# include "SendFile.Response.hpp"
+# include "File.Response.hpp"
 
 // setup
 # include "Config.hpp"

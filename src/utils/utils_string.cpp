@@ -174,29 +174,40 @@ std::string getInstruction(std::string& inputStr)
 
 /*
 Operates on a string ref that contains key-value pairs.
-1st arg is the string ref.
-2nd is end of key.
-3rd is end of value.
-4th is end of region to parse in 1st arg.
-Should make NULL option to parse entire object, but am just passing wyld string
-that doesn't exist.
-Erases parsed region from the string ref.
+1st arg is the string ref to operate on.
+2nd is end of key (e.g. "=").
+3rd is end of value and therefore also end of key-value pair (e.g. ";").
+4th is end of region to parse in 1st arg (e.g. "\r\n\r\n"). Pass "" to parse entire 1st arg.
+Erases the parsed region from the string ref.
 */
 std::map<std::string, std::string> parseStrMap(std::string& input, const std::string& endOfKey, const std::string& endOfValue, const std::string& endOfMap)
 {
 	std::map<std::string, std::string> 	stringMap;
 	std::string 						key, value;
 
-	while (!input.empty())
+	if (endOfMap.empty())
 	{
-		if (input.find(endOfMap) == 0)
+		while (!input.empty())
 		{
-			input = input.substr(endOfMap.size());
-			return stringMap;
+			key = splitEraseStr(input, endOfKey);
+			value = splitEraseStr(input, endOfValue);
+			stringMap.insert(std::make_pair(strToLower(key), value));
 		}
-		key = splitEraseStr(input, endOfKey);
-		value = splitEraseStr(input, endOfValue);
-		stringMap.insert(std::make_pair(strToLower(key), value));
 	}
+	else // same function as before, except for the if()
+	{
+		while (!input.empty())
+		{
+			if (input.find(endOfMap) == 0)
+			{
+				input = input.substr(endOfMap.size());
+				return stringMap;
+			}
+			key = splitEraseStr(input, endOfKey);
+			value = splitEraseStr(input, endOfValue);
+			stringMap.insert(std::make_pair(strToLower(key), value));
+		}
+	}
+
 	return stringMap;
 }

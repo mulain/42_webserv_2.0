@@ -10,7 +10,7 @@ RESET	=	\033[0m
 
 SRCFILE	=	main.cpp\
 			$(addprefix exceptions/, ErrorCode.exception.cpp CloseConnection.exception.cpp)\
-			$(addprefix Response/, A_Response.cpp DynContent.Response.cpp SendFile.Response.cpp)\
+			$(addprefix Response/, A_Response.cpp DynContent.Response.cpp File.Response.cpp)\
 			$(addprefix setup/, Config.cpp ConfigFile.cpp)\
 			$(addprefix utils/, utils_file.cpp utils_misc.cpp utils_string.cpp)\
 			Binding.cpp\

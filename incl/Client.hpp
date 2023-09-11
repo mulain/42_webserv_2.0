@@ -9,7 +9,8 @@ class Client
 		Client(const Config&, int, sockaddr_in);
 		Client(const Client&);
 		~Client();
-		Client& operator=(const Client&);
+		
+		Client&		operator=(const Client&);
 
 		void 		whoIsI() const;
 		void		incomingData(std::vector<pollfd>::iterator);

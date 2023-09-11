@@ -1,14 +1,14 @@
-#ifndef SENDFILE_RESPONSE_HPP
-# define SENDFILE_RESPONSE_HPP
+#ifndef FILE_RESPONSE_HPP
+# define FILE_RESPONSE_HPP
 
 # include "webserv.hpp"
 
-class SendFile: public Response
+class File: public Response
 {
 	public:
-		SendFile(int, std::string, const Request&);
-		SendFile(const SendFile&);
-		~SendFile() {}
+		File(int, std::string, const Request&);
+		File(const File&);
+		~File() {}
 
 		bool				send(int);
 		Response*			clone() const;

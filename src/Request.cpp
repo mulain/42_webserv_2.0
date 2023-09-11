@@ -105,7 +105,7 @@ void Request::parseRequestHeaders()
 	if (_headers.find("cookie") != _headers.end())
 	{
 		std::string temp = _headers["cookie"]; // parseStrMap erases from the input string. We want to preserve the cookie header to be able to pass it to CGI
-		_cookies = parseStrMap(temp, "=", ";", "Please parse me to the end!");
+		_cookies = parseStrMap(temp, "=", ";", "");
 	}
 }
 

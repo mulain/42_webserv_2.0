@@ -130,7 +130,7 @@ void Client::newResponse(int code)
 	std::string userPagePath = _request->statusPagePath(code);
 
 	if (resourceExists(userPagePath))
-		_response = new SendFile(code, userPagePath, *_request);
+		_response = new File(code, userPagePath, *_request);
 	else
 		_response = new DynContent(code, statusPage, *_request);
 
@@ -142,7 +142,7 @@ void Client::newResponse(std::string sendPath)
 	if (_response)
 		delete _response;
 	
-	_response = new SendFile(200, sendPath, *_request);
+	_response = new File(200, sendPath, *_request);
 	_rdyToSend = true;
 }
 
