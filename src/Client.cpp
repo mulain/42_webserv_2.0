@@ -11,11 +11,11 @@ Client::Client(const Config& config, int fd, sockaddr_in address):
 	_childLaunched(false)
 {}
 
-Client::Client(const Client& src):
+/* Client::Client(const Client& src):
 	_config(src._config)
 {
 	*this = src;
-}
+} */
 
 Client::~Client()
 {
@@ -26,7 +26,7 @@ Client::~Client()
 		delete _response;
 }
 
-Client& Client::operator=(const Client& src)
+/* Client& Client::operator=(const Client& src)
 {
 	if (src._request != NULL)
 		_request = new Request(*src._request);
@@ -57,7 +57,7 @@ Client& Client::operator=(const Client& src)
 	_childToParent[1] = src._childToParent[1];
 
 	return *this;
-}
+} */
 
 void Client::incomingData(std::vector<pollfd>::iterator pollStruct)
 {

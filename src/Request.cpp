@@ -140,7 +140,6 @@ void Request::trackSession()
 	}
 }
 
-
 void Request::selectConfig()
 {
 	if (_host.empty() || isStringInVec(_host, _config->getNames()))
@@ -172,12 +171,15 @@ void Request::requestError()
 	if (_URL.find("/") == std::string::npos)
 		throw ErrorCode(404, __FUNCTION__);
 	
+	if (!resourceExists(prependRoot(_URL)))
+		throw ErrorCode(404, __FUNCTION__);
+
 	if (_contentLength > _activeConfig->getClientMaxBody())
 		throw ErrorCode(413, __FUNCTION__);
-	
+
 	_locInfo = _activeConfig->getLocations()->find(_directory);
-	if (_locInfo == _activeConfig->getLocations()->end()) // have to specifically allow each path in config file
-		throw ErrorCode(404, __FUNCTION__); // returning 404, not 403, to not leak file structure
+	if (_locInfo == _activeConfig->getLocations()->end())
+		throw ErrorCode(403, __FUNCTION__); // should return 404 on a production system to not leak file structure
 		
 	else if ((_method == GET && !_locInfo->second.get)
 		|| (_method == POST && !_locInfo->second.post)
