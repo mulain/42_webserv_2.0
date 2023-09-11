@@ -167,20 +167,22 @@ void Request::requestError()
 
 	if (_method != GET && _method != POST && _method != DELETE)
 		throw ErrorCode(501, __FUNCTION__);
-	
-	if (!resourceExists(prependRoot(_URL)))
-		throw ErrorCode(404, __FUNCTION__);
 
 	if (_contentLength > _activeConfig->getClientMaxBody())
 		throw ErrorCode(413, __FUNCTION__);
 
 	_locInfo = _activeConfig->getLocations()->find(_directory);
 	if (_locInfo == _activeConfig->getLocations()->end())
-		throw ErrorCode(403, __FUNCTION__); // should return 404 on a production system to not leak file structure
+	{
+		if ((_method == GET || _method == DELETE) && !resourceExists(prependRoot(_URL)))
+			throw ErrorCode(404, __FUNCTION__); // can't check before in case of http redir
+
+		throw ErrorCode(403, __FUNCTION__); // should always 404 on a production system to not leak file structure
+	}
 		
 	else if ((_method == GET && !_locInfo->second.get)
 		|| (_method == POST && !_locInfo->second.post)
-		|| (_method == DELETE && !_locInfo->second.delete_))
+		|| (_method == DELETE && !_locInfo->second.delete_)) 
 		throw ErrorCode(405, __FUNCTION__);
 }
 
@@ -197,7 +199,6 @@ void Request::updateVars()
 			_internalScript = anotherDynCont;
 		...
 		*/
-		
 	}
 	else if (_activeConfig->getCgiPaths()->find(extension) != _activeConfig->getCgiPaths()->end())
 	{
@@ -223,9 +224,10 @@ void Request::updateVars()
 	std::string	http_redir = _locInfo->second.http_redir;
 	if (_method == POST && !_locInfo->second.upload_dir.empty()) // upload_redir supercedes http_redir
 	{
-		if (!resourceExists(_locInfo->second.upload_dir))
+		_updatedDirectory = prependRoot(_locInfo->second.upload_dir);
+		
+		if (!resourceExists(_updatedDirectory))
 			throw ErrorCode(500, __FUNCTION__);
-		_updatedDirectory = _locInfo->second.upload_dir;
 	}
 	else if (!http_redir.empty())
 		_updatedDirectory = http_redir;

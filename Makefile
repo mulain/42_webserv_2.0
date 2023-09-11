@@ -46,6 +46,9 @@ re: fclean all
 run: all
 	./$(NAME)
 
+valgrind: all
+	valgrind ./$(NAME)
+
 git:
 	git add .
 	git commit -m "auto add & push"

@@ -64,25 +64,21 @@ void Client::incomingData(std::vector<pollfd>::iterator pollStruct)
 	_pollStruct = pollStruct;
 	
 	receive();
+	
 	if (!_request)
 		newRequest();
-	// maybe handle cgi partition here
-	if (_request->internalScript())
+
+	if (_request->cgiRequest())
+	{
+		handleGetCGI(); // shmangidy
+		handlePostCGI(); // shmangidy
+	}
+	else if (_request->internalScript())
 		newResponse(_request->internalScript());
 	else if (_request->method() == GET)
-	{
-		if (_request->cgiRequest())
-			handleGetCGI(); // shmangidy
-		else
-			handleGet();
-	}
+		handleGet();
 	else if (_request->method() == POST)
-	{
-		if (_request->cgiRequest())
-			handlePostCGI(); // shmangidy
-		else
-			handlePost();
-	}
+		handlePost();
 	else if (_request->method() == DELETE)
 		handleDelete();
 }
@@ -163,7 +159,6 @@ bool Client::outgoingData()
 
 void Client::handleGet()
 {
-	ANNOUNCEME_FD
 	if (isDirectory(_request->updatedURL()))
 	{
 		std::string stdFile = _request->updatedURL() + _request->standardFile();
@@ -200,6 +195,8 @@ void Client::handlePost()
 {
 	std::ofstream	outputFile;
 	
+	// maybe check for file already existing. Then overwriting if DELETE, else maybe 409 Conflict
+
 	if (_append)
 		outputFile.open(_request->updatedURL().c_str(), std::ios::binary | std::ios::app);
 	else
@@ -207,18 +204,20 @@ void Client::handlePost()
 		outputFile.open(_request->updatedURL().c_str(), std::ios::binary | std::ios::trunc);
 		_append = true;
 	}
+
 	if (!outputFile)
 	{
 		outputFile.close();
 		throw ErrorCode(500, __FUNCTION__);
 	}
+
 	outputFile.write(_buffer.c_str(), _buffer.size());
 	_bytesWritten += _buffer.size();
 	_buffer.clear();
 	outputFile.close();
 
-/* 	if (_bytesWritten >= _contentLength)
-		sendEmptyStatus(201); */
+	if (_bytesWritten >= _request->contentLength())
+		newResponse(201);
 }
 
 void Client::handleGetCGI()
