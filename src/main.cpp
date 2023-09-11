@@ -7,7 +7,7 @@ int main(int argc, char** argv)
 	std::signal(SIGINT, sigHandler);
 	std::signal(SIGTERM, sigHandler);
 	
-	Server webserv(argc, argv);
+	Server	webserv(argc, argv);
 	
 	webserv.launchBindings();
 	

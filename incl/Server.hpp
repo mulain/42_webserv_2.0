@@ -16,6 +16,8 @@ class Server
 
 	private:
 		bool							pollhup();
+		bool							pollin();
+		bool							pollout();
 		
 		void							bindListeningSocket(const Config&);
 		void							bindError(int, Binding*);

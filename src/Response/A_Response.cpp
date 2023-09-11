@@ -66,7 +66,7 @@ std::string Response::buildResponseHead()
 	else
 	{
 		ss << "content-length: " << _contentLength << "\r\n";
-		if (_contentLength != 0)
+		//if (_contentLength != 0)
 			ss << "content-type: " << _contentType << "\r\n";
 	}
 	if (_request.setCookie())

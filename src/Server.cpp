@@ -53,10 +53,10 @@ void Server::bindListeningSocket(const Config& config)
 	if (listen(listen_fd, SOMAXCONN) == -1)
 		bindError(listen_fd, newBinding);
 	
+	addPollStruct(listen_fd, POLLIN);
 	newBinding->setFd(listen_fd);
 	_bindings.push_back(newBinding);
-	addPollStruct(listen_fd, POLLIN);
-	_bindings.back()->whoIsI();
+	newBinding->whoIsI();
 }
 
 bool Server::poll()
@@ -75,24 +75,22 @@ void Server::acceptClients()
 {
 	for (size_t i = 0; i < _bindings.size(); ++i)
 	{
-		if (_bindings[i]->fd() != _pollStructs[i].fd)
-			std::cout << MMMMMEGAERROR << std::endl;
-		
 		if (!(_pollStructs[i].revents & POLLIN))
 			continue;
 			
 		while (true)
 		{
 			sockaddr_in	addr;
-			socklen_t	clientAddrSize = sizeof(addr);
+			socklen_t	addrSize = sizeof(addr);
 		
-			int new_sock = accept(_pollStructs[i].fd, (sockaddr*)&addr, &clientAddrSize);
+			int new_sock = accept(_pollStructs[i].fd, (sockaddr*)&addr, &addrSize);
 			if (new_sock == -1)
 			{
 				if (errno == EWOULDBLOCK)
 					return;
 				acceptError(new_sock);
 			}
+			
 			if (fcntl(new_sock, F_SETFL, O_NONBLOCK) == -1)
 				acceptError(new_sock);
 
@@ -104,28 +102,22 @@ void Server::acceptClients()
 
 void Server::handleClients()
 {
-	size_t i = _bindings.size(); // skip listening fds
-	while (i < _pollStructs.size())
+	_pollStruct = _pollStructs.begin() + _bindings.size();
+
+	while (_pollStruct != _pollStructs.end())
 	{
 		try
 		{
-			_client = getClient(_pollStructs[i].fd);
-			_pollStruct = _pollStructs.begin() + i;
+			_client = getClient(_pollStruct->fd);
 
 			if (pollhup())
 				continue;
 
-			if (_pollStruct->revents & POLLIN)
-				(*_client)->incomingData(_pollStruct);
-			else if (_pollStruct->revents & POLLOUT)
-			{
-				if(!(*_client)->outgoingData())
-				{
-					closeClient(CLOSE_DONE);
-					continue;
-				}
-			}
+			if (pollin())
+				continue;
 
+			if (pollout())
+				continue;
 		}
 		catch (const ErrorCode& e)
 		{
@@ -138,7 +130,7 @@ void Server::handleClients()
 			closeClient(CLOSE_EXCPT);
 			continue;
 		}
-		++i;
+		++_pollStruct;
 	}
 }
 
@@ -152,13 +144,39 @@ bool Server::pollhup()
 	return false;
 }
 
+bool Server::pollin()
+{
+	if (_pollStruct->revents & POLLIN)
+	{
+		(*_client)->incomingData(_pollStruct);
+		++_pollStruct;
+		return true;
+	}
+	return false;
+}
+
+bool Server::pollout()
+{
+	if (_pollStruct->revents & POLLOUT)
+	{
+		if (!(*_client)->outgoingData())
+		{
+			closeClient(CLOSE_DONE);
+			return true;
+		}
+	}
+	return false;
+}
+
 void Server::closeClient(std::string msg)
 {
-	std::cout << "\nClosing Client on fd " << (*_client)->getFd() << ": " << msg << std::endl;
+	size_t	index = _pollStruct - _pollStructs.begin();
 	
-	close((*_client)->getFd());
+	std::cout << "\nClosing Client on fd " << _pollStruct->fd << ": " << msg << std::endl;
+	close (_pollStruct->fd);
 	
 	_pollStructs.erase(_pollStruct);
+	_pollStruct = _pollStructs.begin() + index;
 	
 	delete *_client;
 	_clients.erase(_client);
