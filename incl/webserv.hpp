@@ -69,10 +69,11 @@ size_t		fileSize(const std::string&);
 std::string	fileExtension(const std::string&);
 
 // utils_misc.cpp
-void		sigHandler(int);
-std::string	getHttpMsg(int);
-std::string	currentTimeCPP98();
-std::string	generateSessionId();
+void								sigHandler(int);
+std::string							getHttpMsg(int);
+std::map<std::string, std::string>	initMimeTypesMap();
+std::string							currentTimeCPP98();
+std::string							generateSessionId();
 
 // utils_string.cpp
 bool								isAlnumStr(const std::string &);

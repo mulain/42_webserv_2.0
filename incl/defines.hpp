@@ -66,8 +66,8 @@
 // ConfigFile
 # define E_CF_FILEOPEN		"Error: ServerConfig: Could not open config file: "
 # define E_CF_ELMNTDECL		"Error: ConfigFile: Invalid element declaration, (only \"server\" allowed): "
-# define E_CF_NOSERVER		"Error: ConfigFile: No valid server configs found."
-# define E_CF_MANYSERVER	"Error: ConfigFile: Too many server configs found. Maximum of 10 allowed."
+# define E_CF_NOSERVER		"Error: ConfigFile: No valid Configs found."
+# define E_CF_MANYSERVER	"Error: ConfigFile: Too many Configs found. Maximum of 10 allowed."
 # define E_CF_SIZEMISMATCH	"Error: ConfigFile: Receive chunk size must be larger than max request head size."
 
 # define I_CF_CONFIGIMPORT	"Info: ConfigFile: " << _configs.size() << " distinct" << (_configs.size() == 1 ? " Config" : " Configs") <<" extracted from " << configPath << "."

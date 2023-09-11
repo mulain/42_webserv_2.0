@@ -2,7 +2,8 @@
 
 Server::Server(int argc, char** argv)
 {
-	std::string path = "system/configs/example.conf";
+	std::string	path = "system/configs/example.conf";
+	
 	if (argc > 1)
 		path = argv[1];
 	
