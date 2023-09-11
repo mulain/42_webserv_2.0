@@ -171,23 +171,28 @@ void Request::requestError()
 	if (_contentLength > _activeConfig->getClientMaxBody())
 		throw ErrorCode(413, __FUNCTION__);
 
-	_locInfo = _activeConfig->getLocations()->find(_directory);
-	if (_locInfo == _activeConfig->getLocations()->end())
+	std::map<std::string, s_locInfo>::const_iterator it = _activeConfig->getLocations()->find(_directory);
+
+	if (it == _activeConfig->getLocations()->end())
 	{
 		if ((_method == GET || _method == DELETE) && !resourceExists(prependRoot(_URL)))
 			throw ErrorCode(404, __FUNCTION__); // can't check before in case of http redir
 
 		throw ErrorCode(403, __FUNCTION__); // should always 404 on a production system to not leak file structure
 	}
-		
-	else if ((_method == GET && !_locInfo->second.get)
-		|| (_method == POST && !_locInfo->second.post)
-		|| (_method == DELETE && !_locInfo->second.delete_)) 
+	
+	_locationInfo = it->second;
+
+	if ((_method == GET && !_locationInfo.get)
+		|| (_method == POST && !_locationInfo.post)
+		|| (_method == DELETE && !_locationInfo.delete_)) 
 		throw ErrorCode(405, __FUNCTION__);
 }
 
 void Request::updateVars()
 {	
+	// file extension / CGI
+	
 	std::string extension = fileExtension(_file);
 
 	if (extension == ".shmang")
@@ -206,33 +211,35 @@ void Request::updateVars()
 		_cgiRequest = true;
 	}
 	
-	_standardFile = _locInfo->second.std_file;
+	// standard file
+
+	_standardFile = _locationInfo.std_file;
 	if (_standardFile.empty())
 		_standardFile = _activeConfig->getStandardFile();
 	
-	/* // old version
-	std::string	http_redir = loc->second.http_redir;
-	if (!http_redir.empty())
-		_updatedDirectory = http_redir;
-	else if (_method == POST && !loc->second.upload_dir.empty())
-		_updatedDirectory = loc->second.upload_dir;
-	else
-		_updatedDirectory = _directory;
+	// if (POST) -> upload_redir
 
-	*/
-
-	std::string	http_redir = _locInfo->second.http_redir;
-	if (_method == POST && !_locInfo->second.upload_dir.empty()) // upload_redir supercedes http_redir
+	if (_method == POST && !_locationInfo.upload_dir.empty()) // upload_redir supercedes http_redir
 	{
-		_updatedDirectory = prependRoot(_locInfo->second.upload_dir);
-		
-		if (!resourceExists(_updatedDirectory))
+		_updatedDirectory = _locationInfo.upload_dir;
+
+		if (!resourceExists(prependRoot(_updatedDirectory)))
 			throw ErrorCode(500, __FUNCTION__);
+		
+		if (_activeConfig->getLocations()->find(_updatedDirectory) == _activeConfig->getLocations()->end())
+			throw ErrorCode(403, __FUNCTION__); // upload_redir also has to be set in the config file
+		
+		_locationInfo = _activeConfig->getLocations()->find(_updatedDirectory)->second; // upload_redir changes locInfo
 	}
-	else if (!http_redir.empty())
-		_updatedDirectory = http_redir;
+
+	// else -> http_redir
+
+	else if (!_locationInfo.http_redir.empty())
+		_updatedDirectory = _locationInfo.http_redir; // http_redir does not change locInfo
 	else
 		_updatedDirectory = _directory;
+
+	// finalize updated vars
 
 	_updatedDirectory = prependRoot(_updatedDirectory);
 	_updatedURL = _updatedDirectory + _file;
@@ -306,9 +313,9 @@ std::string Request::file() const { return _file; }
 
 bool Request::dirListing() const
 {
-	if (_locInfo->second.dir_listing == "yes")
+	if (_locationInfo.dir_listing == "yes")
 		return true;
-	else if (_locInfo->second.dir_listing == "no")
+	else if (_locationInfo.dir_listing == "no")
 		return false;
 	else if (!_activeConfig->getDefaultDirlisting())
 		return false;
@@ -329,6 +336,8 @@ std::string Request::standardFile() const { return _standardFile; }
 std::string Request::updatedDir() const { return _updatedDirectory; }
 
 std::string Request::updatedURL() const { return _updatedURL; }
+
+const s_locInfo* Request::locationInfo() const { return &_locationInfo; }
 
 std::string Request::statusPagePath(int code) const
 {

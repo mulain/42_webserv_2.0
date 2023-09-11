@@ -195,7 +195,8 @@ void Client::handlePost()
 {
 	std::ofstream	outputFile;
 	
-	// maybe check for file already existing. Then overwriting if DELETE, else maybe 409 Conflict
+	if (resourceExists(_request->updatedURL()) && !_request->locationInfo()->delete_)
+		throw ErrorCode(409, __FUNCTION__); // if DELETE not allowed and file already exists
 
 	if (_append)
 		outputFile.open(_request->updatedURL().c_str(), std::ios::binary | std::ios::app);

@@ -34,6 +34,7 @@ class Request
 		std::string											standardFile() const;
 		std::string											updatedDir() const;
 		std::string											updatedURL() const;
+		const s_locInfo*									locationInfo() const;
 		std::string											statusPagePath(int) const;
 		std::string											root() const;
 		const std::map<std::string, std::string>*			mimeTypes() const;
@@ -71,8 +72,8 @@ class Request
 		std::string											_standardFile;
 		std::string											_updatedDirectory;
 		std::string											_updatedURL;
+		s_locInfo											_locationInfo;
 		std::string											_cgiExecPath;
-		std::map<std::string, s_locInfo>::const_iterator	_locInfo;
 };
 
 #endif
