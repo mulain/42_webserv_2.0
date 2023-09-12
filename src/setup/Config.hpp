@@ -19,7 +19,7 @@ class Config
 		size_t										getMaxConnections() const;
 		const std::string&							getStandardFile() const;
 		const std::map<int, std::string>*			getStatusPagePaths() const;
-		const std::map<std::string, s_locInfo>*		getLocations() const;
+		const std::map<std::string, locInfo>*		getLocations() const;
 		const std::map<std::string, std::string>*	getCgiPaths() const;
 		const std::vector<Config>&					getAltConfigs() const;
 
@@ -46,7 +46,7 @@ class Config
 		size_t													_maxConnections;
 		std::string												_standardFile;
 		std::map<int, std::string>								_statusPagePaths;
-		std::map<std::string, s_locInfo>						_locations;
+		std::map<std::string, locInfo>							_locations;
 		std::map<std::string, std::string>						_cgiPaths;
 		std::vector<Config>										_altConfigs;
 		std::map<std::string, void(Config::*)(std::string&)>	_functionMap;

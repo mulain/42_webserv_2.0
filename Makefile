@@ -3,20 +3,20 @@ NAME	=	webserv
 CC		=	c++
 RM		=	rm -rf
 FLAGS	=	-Wall -Wextra -Werror -pedantic -std=c++98 #-fsanitize=address
-INCLUDE	=	-Iincl -Iincl/exceptions -Iincl/Response -Iincl/setup
+INCLUDE	=	-Isrc -Isrc/Binding -Isrc/Client -Isrc/exceptions -Isrc/Request -Isrc/Response -Isrc/Server -Isrc/setup -Isrc/utils
 
 COLOR	=	\033[30m
 RESET	=	\033[0m
 
-SRCFILE	=	main.cpp\
+SRCFILE	=	webserv.cpp\
+			$(addprefix Binding/, Binding.cpp)\
+			$(addprefix Client/, Client.cpp)\
 			$(addprefix exceptions/, ErrorCode.exception.cpp CloseConnection.exception.cpp)\
+			$(addprefix Request/, Request.cpp)\
 			$(addprefix Response/, A_Response.cpp DynContent.Response.cpp File.Response.cpp)\
+			$(addprefix Server/, Server.cpp)\
 			$(addprefix setup/, Config.cpp ConfigFile.cpp)\
-			$(addprefix utils/, utils_file.cpp utils_misc.cpp utils_string.cpp)\
-			Binding.cpp\
-			Request.cpp\
-			Client.cpp\
-			Server.cpp
+			$(addprefix utils/, utils_file.cpp utils_misc.cpp utils_string.cpp)
 SRC		=	$(addprefix src/, $(SRCFILE))
 OBJ		= 	$(addprefix obj/, $(SRCFILE:%.cpp=%.o))
 
@@ -27,8 +27,12 @@ $(NAME): $(OBJ)
 	@echo "$(COLOR)$(NAME) compiled.$(RESET)"
 
 obj/%.o: src/%.cpp
+	@mkdir -p obj/Binding
+	@mkdir -p obj/Client
 	@mkdir -p obj/exceptions
+	@mkdir -p obj/Request
 	@mkdir -p obj/Response
+	@mkdir -p obj/Server
 	@mkdir -p obj/setup
 	@mkdir -p obj/utils
 	$(CC) $(FLAGS) $(INCLUDE) -c $< -o $@

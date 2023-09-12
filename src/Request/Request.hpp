@@ -35,7 +35,7 @@ class Request
 		const std::string&							standardFile() const;
 		const std::string&							updatedDir() const;
 		const std::string&							updatedURL() const;
-		const s_locInfo*							locationInfo() const;
+		const locInfo*							locationInfo() const;
 		std::string									statusPagePath(int) const;
 		const std::string&							root() const;
 	
@@ -73,7 +73,7 @@ class Request
 		std::string									_standardFile;
 		std::string									_updatedDirectory;
 		std::string									_updatedURL;
-		s_locInfo									_locationInfo;
+		locInfo									_locationInfo;
 		std::string									_cgiExecPath;
 };
 

@@ -177,7 +177,7 @@ void Request::requestError()
 	if (_contentLength > _activeConfig->getClientMaxBody())
 		throw ErrorCode(413, sayMyName(__FUNCTION__));
 
-	std::map<std::string, s_locInfo>::const_iterator it = _activeConfig->getLocations()->find(_directory);
+	std::map<std::string, locInfo>::const_iterator it = _activeConfig->getLocations()->find(_directory);
 
 	if (it == _activeConfig->getLocations()->end())
 	{
@@ -345,7 +345,7 @@ const std::string& Request::updatedDir() const { return _updatedDirectory; }
 
 const std::string& Request::updatedURL() const { return _updatedURL; }
 
-const s_locInfo* Request::locationInfo() const { return &_locationInfo; }
+const locInfo* Request::locationInfo() const { return &_locationInfo; }
 
 std::string Request::statusPagePath(int code) const
 {

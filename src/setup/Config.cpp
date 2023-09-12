@@ -48,7 +48,7 @@ void Config::whoIsI() const
 				if (!_locations.empty())
 				{
 					std::cout	<< "known locations:\t" << _locations.begin()->first << '\n';
-					for (std::map<std::string, s_locInfo>::const_iterator it = ++_locations.begin(); it != _locations.end(); it++)
+					for (std::map<std::string, locInfo>::const_iterator it = ++_locations.begin(); it != _locations.end(); it++)
 						std::cout << "\t\t\t" << it->first << '\n';
 				}
 				if (!_cgiPaths.empty())
@@ -92,7 +92,7 @@ const std::string& Config::getStandardFile() const { return _standardFile; }
 
 const std::map<int, std::string>* Config::getStatusPagePaths() const { return &_statusPagePaths; }
 
-const std::map<std::string, s_locInfo>* Config::getLocations() const { return &_locations; }
+const std::map<std::string, locInfo>* Config::getLocations() const { return &_locations; }
 
 const std::map<std::string, std::string>* Config::getCgiPaths() const { return &_cgiPaths; }
 
@@ -229,8 +229,8 @@ void Config::parseStatusPagePaths(std::string& userErrorPages)
 void Config::parseLocations(std::string& locationElement)
 {
 	std::string									path, instruction, key;
-	std::map<std::string, s_locInfo>::iterator	iter;
-	s_locInfo									locInfo;
+	std::map<std::string, locInfo>::iterator	iter;
+	locInfo									locInfo;
 	
 	path = splitEraseTrimChars(locationElement, WHITESPACE);
 	
