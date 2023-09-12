@@ -11,11 +11,9 @@
 # define SESSIONID		"sessionid"
 
 // paths
-# define SYS_CGIPAGE		"system/cgi.html"
-# define SYS_TEMPCGIPOST	"system/temp/cgiPost_fd"
+# define SYS_TEMP_CGIIN		"system/temp/cgiIn_fd"
+# define SYS_TEMP_CGIOUT	"system/temp/cgiOut_fd"
 # define SYS_LOGS			"system/logs/"
-# define SYS_SCRIPT_PY		"system/cgi/python"
-# define SYS_SCRIPT_PHP		"system/cgi/php"
 
 // numericals
 # define RECV_CHUNK_SIZE		16384
@@ -23,7 +21,7 @@
 # define MAX_MAXCLIENTBODY		4294967295 // 2^32 - 1 -> max unsigned long @ 32 bit
 # define MAX_MAXCONNECTIONS		1000 // unused as of now
 # define MAX_REQHEADSIZE		8192
-# define CGITIMEOUT				3
+# define CGI_TIMEOUT			3
 
 // configuration element identifiers
 # define SERVER				"server"
@@ -102,15 +100,16 @@
 # define E_TEMPFILE				"Error: Server: Could not create temporary file."
 # define E_POSTFILE				"Error: Server: Could not create / open POST file."
 # define E_PIPE					"Error: Server: pipe()."
-# define E_FORK					"Error: Server: fork()."
-# define E_EXECVE				"Error: Server: execve()."
 # define E_DUP2					"Error: Server: dup2()."
-# define E_CHILD				"Error: Server: child exited with error or was terminated."
 # define E_IFSTREAM				"Error: Server: ifstream object"
-# define E_CHILDTIMEOUT			"Error: Server: child timed out."
 
 # define I_CONNECTIONLIMIT		"Info: Server: Connection limit reached."
 # define I_CLOSENODATA			"Info: Server: Connection closed (no data received)."
+
+// Client
+# define E_CL_CHILD				"Error: Client: child exited with error or was terminated."
+# define E_CL_CHILDTIMEOUT		"Error: Client: child timed out."
+# define E_CL_TEMPFILEREMOVAL	"Error: Client: Could not remove POST CGI tempfile."
 
 // Response
 # define E_SEND					"No data sent."

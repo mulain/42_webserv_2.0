@@ -228,9 +228,58 @@ void Client::handlePost()
 
 void Client::handleCGI()
 {
-	if (!_childBirth)
+	if (!_childBirth) // not needed yet, only for later non blocking approach
+	{
+		std::stringstream	in, out;
+		
+		in << SYS_TEMP_CGIIN << _fd;
+		_cgiIn = in.str();
+		
+		out << SYS_TEMP_CGIOUT << _fd;
+		_cgiOut = out.str();
+		
 		launchChild();
+	}
 	
+	int status;
+	int	waitReturn;
+	
+	/*
+	remove the forced wait here, just continue the loop and come back next time
+	but care: has to be able to get here again! set pollout? not always!
+	get always can go to pollout immediately
+	post has to be sure to have received ecerything.
+	difference between pipe approach and file apporach. file can 
+	just finish receiving and only then come here
+	*/
+
+	while (_childBirth + CGI_TIMEOUT > time(NULL))
+	{
+		waitReturn = waitpid(_cgiPid, &status, WNOHANG);
+		if (waitReturn != 0)
+			break;
+	}
+
+	if (waitReturn == 0)
+	{
+		std::cerr << E_CL_CHILDTIMEOUT << std::endl;
+		kill(_cgiPid, SIGKILL);
+		waitpid(_cgiPid, &status, 0); // have to wait for child to die
+	}
+	
+	if ( WIFEXITED(status) == 0 || WEXITSTATUS(status) != 0) // WIFEXITED(status) == 0 -> child was interrupted
+	{
+		std::cerr << E_CL_CHILD << std::endl;
+		throw ErrorCode(500, sayMyName(__FUNCTION__));
+	}
+	
+	newResponse(_cgiOut);
+
+	if (_request->method() == POST)
+	{
+		if (unlink(_cgiIn.c_str()) != 0)
+			std::cerr << E_CL_TEMPFILEREMOVAL << std::endl;
+	}
 
 
 }
@@ -244,13 +293,12 @@ void Client::launchChild()
 	
 	if (_cgiPid == 0)
 	{
+		// close socketfds
 		execve(_request->cgiExecPath().c_str(), _argv.data(), _env.data());
-
+		childError();
 	}
 	else
-	{
-
-	}
+		_childBirth = time(NULL);
 }
 
 void Client::buildArgvEnv()
@@ -278,8 +326,6 @@ void Client::buildArgvEnv()
 	if (_request->headers()->find("user-agent") != _request->headers()->end())
 		userAgent = _request->headers()->find("user-agent")->second;
 	
-	//std::string cgiInFile = _clientIt->path_cgiIn;
-
 	_envVec.push_back("SCRIPT_NAME=" + _request->file());
 	_envVec.push_back("QUERY_STRING=" + _request->queryString());
 	_envVec.push_back("REQUEST_METHOD=" + _request->method());
@@ -291,8 +337,8 @@ void Client::buildArgvEnv()
 	_envVec.push_back("SERVER_PORT=" + port.str());
 	_envVec.push_back("PATH_INFO=" + _request->updatedURL());
 	_envVec.push_back("HTTP_USER_AGENT=" + userAgent);
-	//_envVec.push_back("INPUT_FILE=" + _request->path_cgiIn);
-	//_envVec.push_back("OUTPUT_FILE=" + _request->path_cgiOut);
+	_envVec.push_back("INPUT_FILE=" + _cgiIn);
+	_envVec.push_back("OUTPUT_FILE=" + _cgiOut);
 
 	for (size_t i = 0; i < _envVec.size(); ++i)
 		_env.push_back(const_cast<char*>(_envVec[i].c_str()));

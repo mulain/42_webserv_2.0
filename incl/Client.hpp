@@ -56,6 +56,9 @@ class Client
 		int								_parentToChild[2];
 		int								_childToParent[2];
 
+		std::string						_cgiIn;
+		std::string						_cgiOut;
+
 		std::vector<std::string>		_envVec;
 		std::vector<char*>				_env;
 		std::vector<std::string>		_argvVec;
