@@ -2,12 +2,14 @@
 
 <?php
 
+$stderr = fopen('php://stderr', 'w');
+
 $request_method = getenv('REQUEST_METHOD');
 $outfile_path = getenv('OUTPUT_FILE');
 
 if ($request_method === 'GET')
 {
-	echo "\nPHP: processing GET request.\n";
+	fwrite($stderr, "PHP: processing GET request.\n");
 	
 	// get query string from env
 	$query_string = getenv('QUERY_STRING');
@@ -22,7 +24,7 @@ if ($request_method === 'GET')
 
 if ($request_method === 'POST')
 {
-	echo "\nPHP: processing POST request.\n";
+	fwrite($stderr, "PHP: processing POST request.\n");
 
 	$infile_path = getenv('INPUT_FILE');
 
@@ -84,6 +86,7 @@ HTML;
 
 file_put_contents($outfile_path, $html_content);
 
-echo "PHP: request processed.\n";
+fwrite($stderr, "PHP: request processed.\n");
+fclose($stderr);
 
 ?>

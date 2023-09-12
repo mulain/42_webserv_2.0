@@ -7,7 +7,13 @@ file_path = os.environ.get("OUTPUT_FILE", "")
 
 if request_method == "POST":
 	sys.stderr.write("\nPython: processing POST request.\n")
-	form = cgi.FieldStorage() # python will automatically read from stdin if no param is given
+	# form = cgi.FieldStorage() # python will automatically read from stdin if no param is given
+	
+	infile_path = os.environ.get("INPUT_FILE", "")
+
+	with open(infile_path, 'r') as inFile:
+		form = cgi.FieldStorage(inFile)
+	
 	first_name = form.getvalue('first_name', 'none')
 	last_name  = form.getvalue('last_name', 'none')
 
