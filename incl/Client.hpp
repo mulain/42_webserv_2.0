@@ -27,11 +27,16 @@ class Client
 		void							newResponse(std::string);
 		void							newResponse(dynCont);
 
+		void							handleCGI();
 		void							handleGet();
-		void							handleGetCGI();
 		void							handleDelete();
 		void							handlePost();
-		void							handlePostCGI();
+
+		void							launchChild();
+		void							buildArgvEnv();
+		void							cgiError();
+		void							childError();
+		void							closeFd(int*);
 
 		std::string						_buffer;
 		const Config&					_config;
@@ -46,16 +51,15 @@ class Client
 		size_t							_bytesWritten;
  
 		// CGI
-		bool							_childLaunched;
+		pid_t							_cgiPid;
 		time_t							_childBirth;
-		std::string						_cgiExecPath;
+		int								_parentToChild[2];
+		int								_childToParent[2];
+
 		std::vector<std::string>		_envVec;
 		std::vector<char*>				_env;
 		std::vector<std::string>		_argvVec;
 		std::vector<char*>				_argv;
-		pid_t							_cgiPid;
-		int								_parentToChild[2];
-		int								_childToParent[2];
 };
 
 #endif

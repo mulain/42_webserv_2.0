@@ -27,6 +27,7 @@ class Request
 		std::string											file() const;
 		bool												dirListing() const;
 		bool												cgiRequest() const;
+		const std::string&									cgiExecPath() const;
 		dynCont												internalScript() const;
 
 		bool												setCookie() const;

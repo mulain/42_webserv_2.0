@@ -8,8 +8,13 @@ Client::Client(const Config& config, int fd, sockaddr_in address):
 	_address(address),
 	_append(false),
 	_bytesWritten(0),
-	_childLaunched(false)
-{}
+	_childBirth(0)
+{
+	_parentToChild[0] = -1;
+	_parentToChild[1] = -1;
+	_childToParent[0] = -1;
+	_childToParent[1] = -1;
+}
 
 Client::Client(const Client& src):
 	_config(src._config)
@@ -43,9 +48,7 @@ Client& Client::operator=(const Client& src)
 	_buffer = src._buffer;
 	_append = src._append;
 	_bytesWritten = src._bytesWritten;
-	_childLaunched = src._childLaunched;
 	_childBirth = src._childBirth;
-	_cgiExecPath = src._cgiExecPath;
 	_envVec = src._envVec;
 	_env = src._env;
 	_argvVec = src._argvVec;
@@ -69,10 +72,7 @@ void Client::incomingData(std::vector<pollfd>::iterator pollStruct)
 		newRequest();
 
 	if (_request->cgiRequest())
-	{
-		handleGetCGI(); // shmangidy
-		handlePostCGI(); // shmangidy
-	}
+		handleCGI();
 	else if (_request->internalScript())
 		newResponse(_request->internalScript());
 	else if (_request->method() == GET)
@@ -226,12 +226,106 @@ void Client::handlePost()
 		newResponse(201);
 }
 
-void Client::handleGetCGI()
+void Client::handleCGI()
 {
+	if (!_childBirth)
+		launchChild();
+	
+
 
 }
 
-void Client::handlePostCGI()
+void Client::launchChild()
 {
+	buildArgvEnv();
+
+	if ((_cgiPid = fork()) == -1)
+		cgiError();
 	
+	if (_cgiPid == 0)
+	{
+		execve(_request->cgiExecPath().c_str(), _argv.data(), _env.data());
+
+	}
+	else
+	{
+
+	}
+}
+
+void Client::buildArgvEnv()
+{
+	// argv
+	_argvVec.push_back(_request->cgiExecPath()); // name of executable (giving path, but doesn't matter)
+	_argvVec.push_back(_request->updatedURL()); // path to script
+
+	for (size_t i = 0; i < _argvVec.size(); ++i)
+		_argv.push_back(const_cast<char*>(_argvVec[i].c_str()));
+	_argv.push_back(NULL);
+	
+	// env
+	std::stringstream	contentLength, port;
+	std::string			cookie, ipAddress, userAgent;
+	
+	contentLength << _request->contentLength();
+	port << ntohs(_request->activeConfig()->getPort());
+
+	if (_request->headers()->find("cookie") != _request->headers()->end())
+		cookie = _request->headers()->find("cookie")->second;
+
+	ipAddress = inet_ntoa(_address.sin_addr);
+
+	if (_request->headers()->find("user-agent") != _request->headers()->end())
+		userAgent = _request->headers()->find("user-agent")->second;
+	
+	//std::string cgiInFile = _clientIt->path_cgiIn;
+
+	_envVec.push_back("SCRIPT_NAME=" + _request->file());
+	_envVec.push_back("QUERY_STRING=" + _request->queryString());
+	_envVec.push_back("REQUEST_METHOD=" + _request->method());
+	_envVec.push_back("CONTENT_TYPE=" + _request->contentType());
+	_envVec.push_back("CONTENT_LENGTH=" + contentLength.str());
+	_envVec.push_back("HTTP_COOKIE=" + cookie);
+	_envVec.push_back("REMOTE_ADDR=" + ipAddress);
+	_envVec.push_back("SERVER_NAME=" + _request->activeConfig()->getNames()[0]);
+	_envVec.push_back("SERVER_PORT=" + port.str());
+	_envVec.push_back("PATH_INFO=" + _request->updatedURL());
+	_envVec.push_back("HTTP_USER_AGENT=" + userAgent);
+	//_envVec.push_back("INPUT_FILE=" + _request->path_cgiIn);
+	//_envVec.push_back("OUTPUT_FILE=" + _request->path_cgiOut);
+
+	for (size_t i = 0; i < _envVec.size(); ++i)
+		_env.push_back(const_cast<char*>(_envVec[i].c_str()));
+	_env.push_back(NULL);
+}
+
+void Client::cgiError()
+{
+	perror("cgiError");
+	
+	closeFd(&_parentToChild[0]);
+	closeFd(&_parentToChild[1]);
+	closeFd(&_childToParent[0]);
+	closeFd(&_childToParent[1]);
+
+	throw ErrorCode(500, sayMyName(__FUNCTION__));
+}
+
+void Client::childError()
+{
+	perror("Child");
+
+	closeFd(&_parentToChild[0]);
+	closeFd(&_parentToChild[1]);
+	closeFd(&_childToParent[0]);
+	closeFd(&_childToParent[1]);
+	
+	exit(EXIT_FAILURE);
+}
+
+void Client::closeFd(int* fd)
+{
+	if (*fd != -1)
+		close(*fd);
+	*fd = -1;
 }

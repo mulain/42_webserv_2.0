@@ -330,6 +330,8 @@ bool Request::dirListing() const
 
 bool Request::cgiRequest() const { return _cgiRequest; }
 
+const std::string& Request::cgiExecPath() const { return _cgiExecPath; }
+
 dynCont Request::internalScript() const { return _internalScript; }
 
 bool Request::setCookie() const { return _setCookie; }
