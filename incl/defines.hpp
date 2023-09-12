@@ -23,6 +23,7 @@
 # define MAX_MAXCLIENTBODY		4294967295 // 2^32 - 1 -> max unsigned long @ 32 bit
 # define MAX_MAXCONNECTIONS		1000 // unused as of now
 # define MAX_REQHEADSIZE		8192
+# define CGITIMEOUT				3
 
 // configuration element identifiers
 # define SERVER				"server"
