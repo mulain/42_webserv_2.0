@@ -71,9 +71,7 @@ void Client::incomingData(std::vector<pollfd>::iterator pollStruct)
 	if (!_request)
 		newRequest();
 
-	if (_request->cgiRequest())
-		handleCGI();
-	else if (_request->internalScript())
+	if (_request->internalScript())
 		newResponse(_request->internalScript());
 	else if (_request->method() == GET)
 		handleGet();
@@ -164,6 +162,13 @@ bool Client::outgoingData()
 
 void Client::handleGet()
 {
+	if (_request->cgiRequest())
+	{
+		setCgiFiles();
+		handleCGI();
+		return;
+	}
+
 	if (isDirectory(_request->updatedURL()))
 	{
 		std::string stdFile = _request->updatedURL() + _request->standardFile();
@@ -199,15 +204,26 @@ void Client::handleDelete()
 void Client::handlePost()
 {
 	std::ofstream	outputFile;
+	std::string		filePath;
 	
-	if (resourceExists(_request->updatedURL()) && !_request->locationInfo()->delete_)
-		throw ErrorCode(409, sayMyName(__FUNCTION__)); // if DELETE not allowed and file already exists
-
-	if (_append)
-		outputFile.open(_request->updatedURL().c_str(), std::ios::binary | std::ios::app);
+	if (_request->cgiRequest())
+	{
+		setCgiFiles();
+		filePath = _cgiIn;
+	}
 	else
 	{
-		outputFile.open(_request->updatedURL().c_str(), std::ios::binary | std::ios::trunc);
+		filePath = _request->updatedURL();
+		
+		if (resourceExists(filePath) && !_request->locationInfo()->delete_)
+			throw ErrorCode(409, sayMyName(__FUNCTION__)); // if DELETE not allowed and file already exists
+	}
+
+	if (_append)
+		outputFile.open(filePath.c_str(), std::ios::binary | std::ios::app);
+	else
+	{
+		outputFile.open(filePath.c_str(), std::ios::binary | std::ios::trunc);
 		_append = true;
 	}
 
@@ -223,26 +239,22 @@ void Client::handlePost()
 	outputFile.close();
 
 	if (_bytesWritten >= _request->contentLength())
-		newResponse(201);
+	{
+		if (_request->cgiRequest())
+			handleCGI();
+		else
+			newResponse(201);
+	}
 }
 
 void Client::handleCGI()
 {
-	if (!_childBirth) // not needed yet, only for later non blocking approach
-	{
-		std::stringstream	in, out;
-		
-		in << SYS_TEMP_CGIIN << _fd;
-		_cgiIn = in.str();
-		
-		out << SYS_TEMP_CGIOUT << _fd << ".html";
-		_cgiOut = out.str();
-		
-		launchChild();
-	}
-	
 	int status;
 	int	waitReturn;
+	
+	if (!_childBirth) // not needed yet, only for later non blocking approach
+		launchChild();
+	
 	
 	/*
 	remove the forced wait here, just continue the loop and come back next time
@@ -280,8 +292,17 @@ void Client::handleCGI()
 		if (unlink(_cgiIn.c_str()) != 0)
 			std::cerr << E_CL_TEMPFILEREMOVAL << std::endl;
 	}
+}
 
-
+void Client::setCgiFiles()
+{
+	std::stringstream	in, out;
+		
+		in << SYS_TEMP_CGIIN << _fd;
+		_cgiIn = in.str();
+		
+		out << SYS_TEMP_CGIOUT << _fd << ".html";
+		_cgiOut = out.str();
 }
 
 void Client::launchChild()

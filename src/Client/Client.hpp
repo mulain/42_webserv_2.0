@@ -32,6 +32,7 @@ class Client
 		void							handleDelete();
 		void							handlePost();
 
+		void							setCgiFiles();
 		void							launchChild();
 		void							buildArgvEnv();
 		void							cgiError();

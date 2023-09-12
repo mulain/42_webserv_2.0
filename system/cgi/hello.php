@@ -3,7 +3,7 @@
 <?php
 
 $request_method = getenv('REQUEST_METHOD');
-$file_path = getenv('OUTPUT_FILE');
+$outfile_path = getenv('OUTPUT_FILE');
 
 if ($request_method === 'GET')
 {
@@ -20,6 +20,30 @@ if ($request_method === 'GET')
 	$last_name = $query_vars['last_name'] ?? '';
 }
 
+if ($request_method === 'POST')
+{
+	echo "\nPHP: processing POST request.\n";
+
+	$infile_path = getenv('INPUT_FILE');
+
+	$in_file = fopen($infile_path, 'r');
+	
+	$input_data = fread($in_file, filesize($infile_path));
+	$input_data = trim($input_data);
+	
+	// Close the file handle
+	fclose($in_file);
+
+	// Parse the input data as query string (key=value) pairs
+	parse_str($input_data, $post_vars);
+
+	// Extract values for specific keys into variables
+	$first_name = $post_vars['first_name'] ?? '';
+	$last_name = $post_vars['last_name'] ?? '';
+}
+
+/* 
+// for reading from STDIN
 if ($request_method === 'POST')
 {
 	// Open stdin as a file handle
@@ -39,6 +63,7 @@ if ($request_method === 'POST')
 	$first_name = $post_vars['first_name'] ?? '';
 	$last_name = $post_vars['last_name'] ?? '';
 }
+*/
 
 $html_content = <<<HTML
 <!DOCTYPE html>
@@ -57,7 +82,7 @@ $html_content = <<<HTML
 </html>
 HTML;
 
-file_put_contents($file_path, $html_content);
+file_put_contents($outfile_path, $html_content);
 
 echo "PHP: request processed.\n";
 
