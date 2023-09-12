@@ -4,10 +4,10 @@
 # include "webserv.hpp"
 
 // utils_file.cpp
-bool		resourceExists(const std::string&);
-bool		isDirectory(const std::string&);
-size_t		fileSize(const std::string&);
-std::string	fileExtension(const std::string&);
+bool								resourceExists(const std::string&);
+bool								isDirectory(const std::string&);
+size_t								fileSize(const std::string&);
+std::string							fileExtension(const std::string&);
 
 // utils_misc.cpp
 void								sigHandler(int);
