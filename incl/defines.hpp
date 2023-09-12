@@ -114,5 +114,6 @@
 // Response
 # define E_SEND					"No data sent."
 # define E_RECV					"No data received."
+# define E_TEMPFILEREMOVAL		"Error: Response: Could not remove temp CGI-out file."
 
 #endif

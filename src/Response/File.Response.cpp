@@ -55,6 +55,11 @@ bool File::send(int fd)
 	if (fileStream.eof())
 	{
 		fileStream.close();
+		if (_request.cgiRequest())
+		{
+			if (unlink(_sendPath.c_str()) != 0)
+			std::cerr << E_TEMPFILEREMOVAL << std::endl;
+		}
 		return false;
 	}
 	

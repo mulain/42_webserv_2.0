@@ -235,7 +235,7 @@ void Client::handleCGI()
 		in << SYS_TEMP_CGIIN << _fd;
 		_cgiIn = in.str();
 		
-		out << SYS_TEMP_CGIOUT << _fd;
+		out << SYS_TEMP_CGIOUT << _fd << ".html";
 		_cgiOut = out.str();
 		
 		launchChild();
@@ -264,10 +264,10 @@ void Client::handleCGI()
 	{
 		std::cerr << E_CL_CHILDTIMEOUT << std::endl;
 		kill(_cgiPid, SIGKILL);
-		waitpid(_cgiPid, &status, 0); // have to wait for child to die
+		waitpid(_cgiPid, &status, 0); // have to wait for child to finish dying
 	}
 	
-	if ( WIFEXITED(status) == 0 || WEXITSTATUS(status) != 0) // WIFEXITED(status) == 0 -> child was interrupted
+	if (WIFEXITED(status) == 0 || WEXITSTATUS(status) != 0) // WIFEXITED(status) == 0 -> child was interrupted
 	{
 		std::cerr << E_CL_CHILD << std::endl;
 		throw ErrorCode(500, sayMyName(__FUNCTION__));

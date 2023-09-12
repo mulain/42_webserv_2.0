@@ -53,21 +53,20 @@ bool Response::sendInternalBuffer(int fd)
 	return true;
 }
 
+/*
+if (_request.cgiRequest())
+		ss	<< "transfer-encoding: chunked\r\n"
+			<< "content-type: " << getMimeType(".html") << "\r\n"; // CGI only returns html
+*/
 std::string Response::buildResponseHead()
 {
 	std::stringstream	ss;
 	
 	ss	<< HTTPVERSION << ' ' << _code << ' ' << getHttpMsg(_code) << "\r\n"
 		<< "Server: " << SERVERVERSION << "\r\n"
-		<< "connection: close" << "\r\n";
-	if (_request.cgiRequest())
-		ss	<< "transfer-encoding: chunked\r\n"
-			<< "content-type: " << getMimeType(".html") << "\r\n"; // CGI only returns html
-	else
-	{
-		ss << "content-length: " << _contentLength << "\r\n";
-		ss << "content-type: " << _contentType << "\r\n";
-	}
+		<< "connection: close" << "\r\n"
+		<< "content-length: " << _contentLength << "\r\n"
+		<< "content-type: " << _contentType << "\r\n";
 	if (_request.setCookie())
 		ss << buildCookie(SESSIONID, _request.sessionID(), 3600, "/") << "\r\n";
 	ss << "\r\n";

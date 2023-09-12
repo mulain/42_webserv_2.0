@@ -71,15 +71,16 @@ void Request::parseRequestLine()
 
 	_URL = appendSlash(_URL);
 	_directory = _URL.substr(0, _URL.find_last_of("/") + 1);
-	_file = _URL.substr(_URL.find_last_of("/") + 1);
 
-	size_t questionMarkPos = _URL.find("?");
+	size_t	questionMarkPos = _URL.find("?");
 	
 	if (questionMarkPos != std::string::npos)
 	{
 		_queryString = _URL.substr(questionMarkPos + 1);
 		_URL = _URL.substr(0, questionMarkPos);
 	}
+
+	_file = _URL.substr(_URL.find_last_of("/") + 1);
 }
 
 void Request::parseRequestHeaders()

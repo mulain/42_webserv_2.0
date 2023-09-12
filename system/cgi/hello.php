@@ -3,9 +3,12 @@
 <?php
 
 $request_method = getenv('REQUEST_METHOD');
+$file_path = getenv('OUTPUT_FILE');
 
 if ($request_method === 'GET')
 {
+	echo "\nPHP: processing GET request.\n";
+	
 	// get query string from env
 	$query_string = getenv('QUERY_STRING');
 	
@@ -17,7 +20,8 @@ if ($request_method === 'GET')
 	$last_name = $query_vars['last_name'] ?? '';
 }
 
-if ($request_method === 'POST') {
+if ($request_method === 'POST')
+{
 	// Open stdin as a file handle
 	$stdin = fopen('php://stdin', 'r');
 	
@@ -53,6 +57,8 @@ $html_content = <<<HTML
 </html>
 HTML;
 
-echo $html_content;
+file_put_contents($file_path, $html_content);
+
+echo "PHP: request processed.\n";
 
 ?>

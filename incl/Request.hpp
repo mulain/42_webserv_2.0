@@ -38,7 +38,6 @@ class Request
 		const s_locInfo*									locationInfo() const;
 		std::string											statusPagePath(int) const;
 		std::string											root() const;
-		const std::map<std::string, std::string>*			mimeTypes() const;
 	
 	private:
 		std::string											sayMyName(std::string);
