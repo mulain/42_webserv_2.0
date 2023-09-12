@@ -252,18 +252,11 @@ void Client::handleCGI()
 	int status;
 	int	waitReturn;
 	
-	if (!_childBirth) // not needed yet, only for later non blocking approach
+	if (!_childBirth)
+	{
+		_pollStruct->events = POLLOUT | POLLHUP; // this is only ok because we have already finished receiving POST
 		launchChild();
-	
-	
-	/*
-	remove the forced wait here, just continue the loop and come back next time
-	but care: has to be able to get here again! set pollout? not always!
-	get always can go to pollout immediately
-	post has to be sure to have received ecerything.
-	difference between pipe approach and file apporach. file can 
-	just finish receiving and only then come here
-	*/
+	}
 
 	while (_childBirth + CGI_TIMEOUT > time(NULL))
 	{
