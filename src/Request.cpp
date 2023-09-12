@@ -295,27 +295,27 @@ void Request::whoIsI() const
 
 const Config*	Request::activeConfig() const { return _activeConfig; }
 
-std::string Request::method() const { return _method; }
+const std::string& Request::method() const { return _method; }
 
-std::string Request::URL() const { return _URL; }
+const std::string& Request::URL() const { return _URL; }
 
-std::string Request::httpProt() const { return _httpProtocol; }
+const std::string& Request::httpProt() const { return _httpProtocol; }
 
-std::string Request::queryString() const { return _queryString; }
+const std::string& Request::queryString() const { return _queryString; }
 
 const std::map<std::string, std::string>* Request::headers() const { return &_headers; }
 
 const std::map<std::string, std::string>* Request::cookies() const { return &_cookies; }
 
-std::string Request::host() const { return _host; }
+const std::string& Request::host() const { return _host; }
 
 size_t Request::contentLength() const { return _contentLength; }
 
-std::string Request::contentType() const { return _contentType; }
+const std::string& Request::contentType() const { return _contentType; }
 
-std::string Request::directory() const { return _directory; }
+const std::string& Request::directory() const { return _directory; }
 
-std::string Request::file() const { return _file; }
+const std::string& Request::file() const { return _file; }
 
 bool Request::dirListing() const
 {
@@ -333,17 +333,17 @@ bool Request::cgiRequest() const { return _cgiRequest; }
 
 const std::string& Request::cgiExecPath() const { return _cgiExecPath; }
 
-dynCont Request::internalScript() const { return _internalScript; }
+const dynCont& Request::internalScript() const { return _internalScript; }
 
 bool Request::setCookie() const { return _setCookie; }
 
-std::string Request::sessionID() const { return _sessionID; }
+const std::string& Request::sessionID() const { return _sessionID; }
 
-std::string Request::standardFile() const { return _standardFile; }
+const std::string& Request::standardFile() const { return _standardFile; }
 
-std::string Request::updatedDir() const { return _updatedDirectory; }
+const std::string& Request::updatedDir() const { return _updatedDirectory; }
 
-std::string Request::updatedURL() const { return _updatedURL; }
+const std::string& Request::updatedURL() const { return _updatedURL; }
 
 const s_locInfo* Request::locationInfo() const { return &_locationInfo; }
 
@@ -356,4 +356,4 @@ std::string Request::statusPagePath(int code) const
 	return prependRoot(codePath->second);
 }
 
-std::string Request::root() const { return _activeConfig->getRoot(); }
+const std::string& Request::root() const { return _activeConfig->getRoot(); }
