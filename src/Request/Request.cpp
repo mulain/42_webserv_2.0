@@ -33,12 +33,14 @@ Request& Request::operator=(const Request& src)
 	_directory = src._directory;
 	_file = src._file;
 	_cgiRequest = src._cgiRequest;
+	_cgiExecPath = src._cgiExecPath;
+	_cgiIn = src._cgiIn;
+	_cgiOut = src._cgiOut;
 	_internalScript = src._internalScript;
 	_setCookie = src._setCookie;
 	_standardFile = src._standardFile;
 	_updatedDirectory = src._updatedDirectory;
 	_updatedURL = src._updatedURL;
-	_cgiExecPath = src._cgiExecPath;
 	
 	return *this;
 }
@@ -215,6 +217,14 @@ void Request::updateVars()
 	{
 		_cgiExecPath = _activeConfig->getCgiPaths()->find(extension)->second;
 		_cgiRequest = true;
+
+		std::stringstream	in, out;
+		
+		in << SYS_TEMP_CGIIN << _client->getFd();
+		_cgiIn = in.str();
+		
+		out << SYS_TEMP_CGIOUT << _client->getFd() << ".html";
+		_cgiOut = out.str();
 	}
 	
 	// standard file
@@ -332,6 +342,10 @@ bool Request::dirListing() const
 bool Request::cgiRequest() const { return _cgiRequest; }
 
 const std::string& Request::cgiExecPath() const { return _cgiExecPath; }
+
+const std::string& Request::cgiIn() const { return _cgiIn; }
+
+const std::string& Request::cgiOut() const { return _cgiOut; }
 
 const dynCont& Request::internalScript() const { return _internalScript; }
 

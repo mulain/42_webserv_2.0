@@ -32,19 +32,18 @@ class Client
 		void							handleDelete();
 		void							handlePost();
 
-		void							setCgiFiles();
 		void							launchChild();
 		void							buildArgvEnv();
 		void							cgiError();
 		void							childError();
 		void							closeFd(int*);
 
-		std::string						_buffer;
 		const Config&					_config;
 		Request*						_request;
 		Response*						_response;
 		int								_fd;
 		sockaddr_in						_address;
+		std::string						_buffer;
 		std::vector<pollfd>::iterator	_pollStruct;
 		
 		// POST
@@ -56,9 +55,6 @@ class Client
 		time_t							_childBirth;
 		int								_parentToChild[2];
 		int								_childToParent[2];
-
-		std::string						_cgiIn;
-		std::string						_cgiOut;
 
 		std::vector<std::string>		_envVec;
 		std::vector<char*>				_env;

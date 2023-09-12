@@ -28,6 +28,8 @@ class Request
 		bool										dirListing() const;
 		bool										cgiRequest() const;
 		const std::string&							cgiExecPath() const;
+		const std::string&							cgiIn() const;
+		const std::string&							cgiOut() const;
 		const dynCont&								internalScript() const;
 
 		bool										setCookie() const;
@@ -35,7 +37,7 @@ class Request
 		const std::string&							standardFile() const;
 		const std::string&							updatedDir() const;
 		const std::string&							updatedURL() const;
-		const locInfo*							locationInfo() const;
+		const locInfo*								locationInfo() const;
 		std::string									statusPagePath(int) const;
 		const std::string&							root() const;
 	
@@ -68,13 +70,15 @@ class Request
 		std::string									_directory;
 		std::string									_file;
 		bool										_cgiRequest;
+		std::string									_cgiExecPath;
+		std::string									_cgiIn;
+		std::string									_cgiOut;
 		dynCont										_internalScript;
 		bool										_setCookie;
 		std::string									_standardFile;
 		std::string									_updatedDirectory;
 		std::string									_updatedURL;
-		locInfo									_locationInfo;
-		std::string									_cgiExecPath;
+		locInfo										_locationInfo;
 };
 
 #endif

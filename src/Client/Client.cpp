@@ -46,18 +46,22 @@ Client& Client::operator=(const Client& src)
 	_fd = src._fd;
 	_address = src._address;
 	_buffer = src._buffer;
+	_pollStruct = src._pollStruct;
+
 	_append = src._append;
 	_bytesWritten = src._bytesWritten;
-	_childBirth = src._childBirth;
-	_envVec = src._envVec;
-	_env = src._env;
-	_argvVec = src._argvVec;
-	_argv = src._argv;
+	
 	_cgiPid = src._cgiPid;
+	_childBirth = src._childBirth;
 	_parentToChild[0] = src._parentToChild[0];
 	_parentToChild[1] = src._parentToChild[1];
 	_childToParent[0] = src._childToParent[0];
 	_childToParent[1] = src._childToParent[1];
+	
+	_envVec = src._envVec;
+	_env = src._env;
+	_argvVec = src._argvVec;
+	_argv = src._argv;
 
 	return *this;
 }
@@ -164,7 +168,6 @@ void Client::handleGet()
 {
 	if (_request->cgiRequest())
 	{
-		setCgiFiles();
 		handleCGI();
 		return;
 	}
@@ -207,10 +210,7 @@ void Client::handlePost()
 	std::string		filePath;
 	
 	if (_request->cgiRequest())
-	{
-		setCgiFiles();
-		filePath = _cgiIn;
-	}
+		filePath = _request->cgiIn();
 	else
 	{
 		filePath = _request->updatedURL();
@@ -285,24 +285,13 @@ void Client::handleCGI()
 		throw ErrorCode(500, sayMyName(__FUNCTION__));
 	}
 	
-	newResponse(_cgiOut);
+	newResponse(_request->cgiOut());
 
 	if (_request->method() == POST)
 	{
-		if (unlink(_cgiIn.c_str()) != 0)
+		if (unlink(_request->cgiIn().c_str()) != 0)
 			std::cerr << E_CL_TEMPFILEREMOVAL << std::endl;
 	}
-}
-
-void Client::setCgiFiles()
-{
-	std::stringstream	in, out;
-		
-		in << SYS_TEMP_CGIIN << _fd;
-		_cgiIn = in.str();
-		
-		out << SYS_TEMP_CGIOUT << _fd << ".html";
-		_cgiOut = out.str();
 }
 
 void Client::launchChild()
@@ -358,8 +347,8 @@ void Client::buildArgvEnv()
 	_envVec.push_back("SERVER_PORT=" + port.str());
 	_envVec.push_back("PATH_INFO=" + _request->updatedURL());
 	_envVec.push_back("HTTP_USER_AGENT=" + userAgent);
-	_envVec.push_back("INPUT_FILE=" + _cgiIn);
-	_envVec.push_back("OUTPUT_FILE=" + _cgiOut);
+	_envVec.push_back("INPUT_FILE=" + _request->cgiIn());
+	_envVec.push_back("OUTPUT_FILE=" + _request->cgiOut());
 
 	for (size_t i = 0; i < _envVec.size(); ++i)
 		_env.push_back(const_cast<char*>(_envVec[i].c_str()));
