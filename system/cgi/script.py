@@ -28,7 +28,11 @@ html_content = """
 		<li>Your IP: {}</li>
 	</ul>
 	<br>
-	<p>"Query string" is empty? Try appending "?key=value" to the URL!</p>
+	<p>
+		"Query string" is empty? Try appending "?key=value" to the URL!
+		<br>
+		(wont have any other effect, though.)
+	</p>
 
 </body>
 </html>
