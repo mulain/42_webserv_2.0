@@ -2,6 +2,5 @@ active server name in selct config and then five to cgi
 
 map of fds to clients. remove client vec. care when deleting: might have double client pointer entries if pipe fd
 
-cgi non blocking
 
 close socket fds in child

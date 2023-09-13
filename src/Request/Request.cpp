@@ -150,22 +150,35 @@ void Request::trackSession()
 
 void Request::selectConfig()
 {
-	if (_host.empty() || isStringInVec(_host, _config->getNames()))
+	if (_host.empty())
 	{
-		std::cout << "host '" << _host << "' belongs to default config." << std::endl;
+		std::cout << "Empty 'host' header. Running default config." << std::endl;
 		_activeConfig = _config;
+		_selectedHostName = _activeConfig->getNames()[0];
 		return;
 	}
+	
+	if (isStringInVec(_host, _config->getNames()))
+	{
+		std::cout << "Host '" << _host << "' belongs to default config." << std::endl;
+		_activeConfig = _config;
+		_selectedHostName = _host;
+		return;
+	}
+
 	for (size_t i = 0; i < _config->getAltConfigs().size(); ++i)
 	{
 		if (isStringInVec(_host, _config->getAltConfigs()[i].getNames()))
 		{
-			std::cout << "host '" << _host << "' belongs to alternative config #" << i << "." << std::endl;
+			std::cout << "Host '" << _host << "' belongs to alternative config #" << i << "." << std::endl;
 			_activeConfig = &_config->getAltConfigs()[i];
+			_selectedHostName = _host;
 			return;
 		}
 	}
+	
 	_activeConfig = _config;
+	_selectedHostName = _activeConfig->getNames()[0];
 }
 
 void Request::requestError()
@@ -281,14 +294,16 @@ std::string Request::appendSlash(const std::string& path)
 void Request::whoIsI() const
 {
 	std::stringstream ss;
-	ss	<< "----- Request from Client on fd " << _client->getFd()
-		<< " with session id: " << _sessionID << " -----";
+	ss	<< "---------- Request from Client on fd " << _client->getFd()
+		/* << " with session id: " << _sessionID */ << " ----------";
 
 	std::string separator(ss.str().size(), '-');
 
 	std::cout	<< "\n" << ss.str() << "\n"
+				<< "session id:\t" << _sessionID << "\n"
 				<< "host:\t\t" << _host << "\n"
 				<< "active config:\t" << (_activeConfig == _config ? "default config" : "alt config") << "\n"
+				<< "selected host:\t" << _selectedHostName << "\n"
 				<< "method:\t\t" << _method << "\n"
 				<< "URL:\t\t" << _URL << "\n"
 				<< "dir:\t\t" << _directory << "\n"
@@ -300,6 +315,7 @@ void Request::whoIsI() const
 				<< "updatedURL:\t" << _updatedURL << "\n"
 				<< "updatedDir:\t" << _updatedDirectory << "\n"
 				<< "query string:\t" << _queryString << "\n"
+				<< "cgi request:\t" << (_cgiRequest ? "yes" : "no") << "\n"
 				<< separator << std::endl;
 }
 

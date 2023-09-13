@@ -66,6 +66,7 @@ class Request
 		std::string									_host;
 		unsigned long								_contentLength;
 		std::string									_contentType;
+		std::string									_selectedHostName;
 		std::string									_sessionID;
 		std::string									_directory;
 		std::string									_file;
