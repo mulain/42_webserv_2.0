@@ -83,8 +83,9 @@ void Server::acceptClients()
 		{
 			sockaddr_in	addr;
 			socklen_t	addrSize = sizeof(addr);
+			int			new_sock;
 		
-			int new_sock = accept(_pollStructs[i].fd, (sockaddr*)&addr, &addrSize);
+			new_sock = accept(_pollStructs[i].fd, (sockaddr*)&addr, &addrSize);
 			if (new_sock == -1)
 			{
 				if (errno == EWOULDBLOCK)
