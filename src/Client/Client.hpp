@@ -27,7 +27,7 @@ class Client
 		void							newResponse(std::string);
 		void							newResponse(dynCont);
 
-		void							handleCGI();
+		bool							handleCGI();
 		void							handleGet();
 		void							handleDelete();
 		void							handlePost();
@@ -53,6 +53,7 @@ class Client
 		// CGI
 		pid_t							_cgiPid;
 		time_t							_childBirth;
+		bool							_cgiInProgress;
 		int								_parentToChild[2];
 		int								_childToParent[2];
 

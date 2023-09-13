@@ -7,6 +7,9 @@ user_agent = os.environ.get("HTTP_USER_AGENT", "N/A")
 cookie = os.environ.get("HTTP_COOKIE")
 ip_addr = os.environ.get("REMOTE_ADDR")
 
+
+while (1):
+	continue
 html_content = """
 <!DOCTYPE html>
 <html>

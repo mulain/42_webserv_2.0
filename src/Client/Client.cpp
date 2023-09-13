@@ -8,7 +8,8 @@ Client::Client(const Config& config, int fd, sockaddr_in address):
 	_address(address),
 	_append(false),
 	_bytesWritten(0),
-	_childBirth(0)
+	_childBirth(0),
+	_cgiInProgress(false)
 {
 	_parentToChild[0] = -1;
 	_parentToChild[1] = -1;
@@ -53,6 +54,7 @@ Client& Client::operator=(const Client& src)
 	
 	_cgiPid = src._cgiPid;
 	_childBirth = src._childBirth;
+	_cgiInProgress = src._cgiInProgress;
 	_parentToChild[0] = src._parentToChild[0];
 	_parentToChild[1] = src._parentToChild[1];
 	_childToParent[0] = src._childToParent[0];
@@ -159,8 +161,13 @@ void Client::sendStatusPage(int code)
 	newResponse(code);
 }
 
-bool Client::outgoingData()
+bool Client::outgoingData() // returns true if more to send
 {
+	if (_cgiInProgress)
+	{
+		if (handleCGI())
+			return true; // CGI not done
+	}
 	return (_response->send(_fd));
 }
 
@@ -247,31 +254,30 @@ void Client::handlePost()
 	}
 }
 
-void Client::handleCGI()
+bool Client::handleCGI()
 {
 	int status;
-	int	waitReturn;
 	
-	if (!_childBirth)
+	if (!_cgiInProgress)
 	{
 		_pollStruct->events = POLLOUT | POLLHUP; // this is only ok because we have already finished receiving POST
 		launchChild();
 	}
-
-	while (_childBirth + CGI_TIMEOUT > time(NULL))
+	
+	if (waitpid(_cgiPid, &status, WNOHANG) == 0)
 	{
-		waitReturn = waitpid(_cgiPid, &status, WNOHANG);
-		if (waitReturn != 0)
-			break;
-	}
-
-	if (waitReturn == 0)
-	{
-		std::cerr << E_CL_CHILDTIMEOUT << std::endl;
-		kill(_cgiPid, SIGKILL);
-		waitpid(_cgiPid, &status, 0); // have to wait for child to finish dying
+		if (_childBirth + CGI_TIMEOUT < time(NULL))
+		{
+			std::cerr << E_CL_CHILDTIMEOUT << std::endl;
+			kill(_cgiPid, SIGKILL);
+			waitpid(_cgiPid, &status, 0); // have to wait for child to finish dying
+		}
+		else
+			return true; // child still running, but not timed out.
 	}
 	
+	_cgiInProgress = false;
+
 	if (WIFEXITED(status) == 0 || WEXITSTATUS(status) != 0) // WIFEXITED(status) == 0 -> child was interrupted
 	{
 		std::cerr << E_CL_CHILD << std::endl;
@@ -285,6 +291,8 @@ void Client::handleCGI()
 		if (unlink(_request->cgiIn().c_str()) != 0)
 			std::cerr << E_CL_TEMPFILEREMOVAL << std::endl;
 	}
+	
+	return false;
 }
 
 void Client::launchChild()
@@ -301,7 +309,10 @@ void Client::launchChild()
 		childError();
 	}
 	else
+	{
 		_childBirth = time(NULL);
+		_cgiInProgress = true;
+	}
 }
 
 void Client::buildArgvEnv()
@@ -352,7 +363,7 @@ void Client::cgiError()
 {
 	perror("cgiError");
 	
-	closeFd(&_parentToChild[0]);
+	closeFd(&_parentToChild[0]); // these arent implemented as of now
 	closeFd(&_parentToChild[1]);
 	closeFd(&_childToParent[0]);
 	closeFd(&_childToParent[1]);
