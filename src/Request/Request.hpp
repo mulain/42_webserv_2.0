@@ -20,7 +20,8 @@ class Request
 		const std::string&							queryString() const;
 		const std::map<std::string, std::string>*	headers() const;
 		const std::map<std::string, std::string>*	cookies() const;
-		const std::string&							host() const;
+		const std::string&							requestedHost() const;
+		const std::string&							selectedHost() const;
 		size_t										contentLength() const;
 		const std::string&							contentType() const;
 		const std::string&							directory() const;
@@ -63,10 +64,10 @@ class Request
 		std::string									_queryString;
 		std::map<std::string, std::string>			_headers;
 		std::map<std::string, std::string>			_cookies;
-		std::string									_host;
+		std::string									_requestedHost;
+		std::string									_selectedHost;
 		unsigned long								_contentLength;
 		std::string									_contentType;
-		std::string									_selectedHostName;
 		std::string									_sessionID;
 		std::string									_directory;
 		std::string									_file;

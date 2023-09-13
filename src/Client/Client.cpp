@@ -168,7 +168,7 @@ bool Client::outgoingData() // returns true if more to send
 		if (handleCGI())
 			return true; // CGI not done
 	}
-	return (_response->send(_fd));
+	return _response->send(_fd);
 }
 
 void Client::handleGet()
@@ -213,37 +213,37 @@ void Client::handleDelete()
 
 void Client::handlePost()
 {
-	std::ofstream	outputFile;
-	std::string		filePath;
+	std::ofstream	outFile;
+	std::string		path;
 	
 	if (_request->cgiRequest())
-		filePath = _request->cgiIn();
+		path = _request->cgiIn();
 	else
 	{
-		filePath = _request->updatedURL();
+		path = _request->updatedURL();
 		
-		if (resourceExists(filePath) && !_request->locationInfo()->delete_)
+		if (resourceExists(path) && !_request->locationInfo()->delete_)
 			throw ErrorCode(409, sayMyName(__FUNCTION__)); // if DELETE not allowed and file already exists
 	}
 
 	if (_append)
-		outputFile.open(filePath.c_str(), std::ios::binary | std::ios::app);
+		outFile.open(path.c_str(), std::ios::binary | std::ios::app);
 	else
 	{
-		outputFile.open(filePath.c_str(), std::ios::binary | std::ios::trunc);
+		outFile.open(path.c_str(), std::ios::binary | std::ios::trunc);
 		_append = true;
 	}
 
-	if (!outputFile)
+	if (!outFile)
 	{
-		outputFile.close();
+		outFile.close();
 		throw ErrorCode(500, sayMyName(__FUNCTION__));
 	}
 
-	outputFile.write(_buffer.c_str(), _buffer.size());
+	outFile.write(_buffer.c_str(), _buffer.size());
 	_bytesWritten += _buffer.size();
 	_buffer.clear();
-	outputFile.close();
+	outFile.close();
 
 	if (_bytesWritten >= _request->contentLength())
 	{
@@ -350,7 +350,7 @@ void Client::buildArgvEnv()
 	_envVec.push_back("CONTENT_LENGTH=" + contentLength.str());
 	_envVec.push_back("HTTP_COOKIE=" + cookie);
 	_envVec.push_back("REMOTE_ADDR=" + ipAddress);
-	_envVec.push_back("SERVER_NAME=" + _request->activeConfig()->getNames()[0]);
+	_envVec.push_back("SERVER_NAME=" + _request->selectedHost());
 	_envVec.push_back("SERVER_PORT=" + port.str());
 	_envVec.push_back("PATH_INFO=" + _request->updatedURL());
 	_envVec.push_back("HTTP_USER_AGENT=" + userAgent);

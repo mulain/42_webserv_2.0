@@ -26,7 +26,7 @@ Request& Request::operator=(const Request& src)
 	_queryString = src._queryString;
 	_headers = src._headers;
 	_cookies = src._cookies;
-	_host = src._host;
+	_requestedHost = src._requestedHost;
 	_contentLength = src._contentLength;
 	_contentType = src._contentType;
 	_sessionID = src._sessionID;
@@ -97,7 +97,7 @@ void Request::parseRequestHeaders()
 	_headers = parseStrMap(*buffer, ":", "\r\n", "\r\n");
 	
 	if (_headers.find("host") != _headers.end())
-		_host = _headers["host"];
+		_requestedHost = _headers["host"];
 	
 	if (_headers.find("content-length") != _headers.end())
 	{
@@ -150,35 +150,35 @@ void Request::trackSession()
 
 void Request::selectConfig()
 {
-	if (_host.empty())
+	if (_requestedHost.empty())
 	{
 		std::cout << "Empty 'host' header. Running default config." << std::endl;
 		_activeConfig = _config;
-		_selectedHostName = _activeConfig->getNames()[0];
+		_selectedHost = _activeConfig->getNames()[0];
 		return;
 	}
 	
-	if (isStringInVec(_host, _config->getNames()))
+	if (isStringInVec(_requestedHost, _config->getNames()))
 	{
-		std::cout << "Host '" << _host << "' belongs to default config." << std::endl;
+		std::cout << "Host '" << _requestedHost << "' belongs to default config." << std::endl;
 		_activeConfig = _config;
-		_selectedHostName = _host;
+		_selectedHost = _requestedHost;
 		return;
 	}
 
 	for (size_t i = 0; i < _config->getAltConfigs().size(); ++i)
 	{
-		if (isStringInVec(_host, _config->getAltConfigs()[i].getNames()))
+		if (isStringInVec(_requestedHost, _config->getAltConfigs()[i].getNames()))
 		{
-			std::cout << "Host '" << _host << "' belongs to alternative config #" << i << "." << std::endl;
+			std::cout << "Host '" << _requestedHost << "' belongs to alternative config #" << i << "." << std::endl;
 			_activeConfig = &_config->getAltConfigs()[i];
-			_selectedHostName = _host;
+			_selectedHost = _requestedHost;
 			return;
 		}
 	}
 
 	_activeConfig = _config;
-	_selectedHostName = _activeConfig->getNames()[0];
+	_selectedHost = _activeConfig->getNames()[0];
 }
 
 void Request::requestError()
@@ -294,16 +294,15 @@ std::string Request::appendSlash(const std::string& path)
 void Request::whoIsI() const
 {
 	std::stringstream ss;
-	ss	<< "---------- Request from Client on fd " << _client->getFd()
-		/* << " with session id: " << _sessionID */ << " ----------";
+	ss << "---------- Request from Client on fd " << _client->getFd() << " ----------";
 
 	std::string separator(ss.str().size(), '-');
 
 	std::cout	<< "\n" << ss.str() << "\n"
 				<< "session id:\t" << _sessionID << "\n"
-				<< "host:\t\t" << _host << "\n"
+				<< "requested host:\t" << _requestedHost << "\n"
 				<< "active config:\t" << (_activeConfig == _config ? "default config" : "alt config") << "\n"
-				<< "selected host:\t" << _selectedHostName << "\n"
+				<< "selected host:\t" << _selectedHost << "\n"
 				<< "method:\t\t" << _method << "\n"
 				<< "URL:\t\t" << _URL << "\n"
 				<< "dir:\t\t" << _directory << "\n"
@@ -333,7 +332,9 @@ const std::map<std::string, std::string>* Request::headers() const { return &_he
 
 const std::map<std::string, std::string>* Request::cookies() const { return &_cookies; }
 
-const std::string& Request::host() const { return _host; }
+const std::string& Request::requestedHost() const { return _requestedHost; }
+
+const std::string& Request::selectedHost() const { return _selectedHost; }
 
 size_t Request::contentLength() const { return _contentLength; }
 
