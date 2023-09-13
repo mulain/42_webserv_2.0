@@ -284,7 +284,10 @@ bool Client::handleCGI()
 		throw ErrorCode(500, sayMyName(__FUNCTION__));
 	}
 	
-	newResponse(_request->cgiOut());
+	if (resourceExists(_request->cgiOut()))
+		newResponse(_request->cgiOut());
+	else
+		newResponse(500);
 
 	if (_request->method() == POST)
 	{

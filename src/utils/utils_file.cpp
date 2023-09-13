@@ -28,7 +28,7 @@ size_t fileSize(const std::string& filePath)
 	if (filePath.empty())
 		return 0;
 	if (stat(filePath.c_str(), &fileInfo) != 0)
-		return static_cast<size_t>(-1);
+		return 0;
 	return static_cast<size_t>(fileInfo.st_size);
 }
 
