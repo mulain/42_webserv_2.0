@@ -8,6 +8,8 @@ Main points:
 - Only one call to a multiplexing function is allowed (I used poll())
 - Manipulation of fds only allowed after going through the multiplexing function
 - Implement basic CGI functionality
+	- CGI must terminate after a time-out in case of infinite loop
+	- Other clients should not be left hanging for the duration of the time-out
 - Implement directory listing
 - Implement http redirection
 - Implement GET POST and DELETE methods
