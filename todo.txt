@@ -1,4 +1,6 @@
-map of fds to clients. remove client vec. care when deleting: might have double client pointer entries if pipe fd
+Maybe:
+- use pipes to communicate with cgi (have to poll them then!)
+- map of fds to clients. remove client vec. care when deleting: might have double client pointer entries if pipe fd
 
-
-close socket fds in child
+Should, but functionally irrelevant:
+- close socket fds in child (would have to pass pollVector to Client to do that. No problem.)
