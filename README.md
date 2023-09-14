@@ -19,8 +19,6 @@ After submitting, I completely rewrote this project with a cleaner structure.
 
 ## Notes
 
-<ul>
-	<li>Response uses an abstract base class. Derived classes are for sending files or for sending (internally generated) dynamic content.</li>
-	<li>Complex objects can create problems when stored directly in vectors. Better to allocate them manually and store the pointers in a vector. Cleaner and less work in the end.</li>
-	<li>Control structure for CGI allows the main loop to continue while CGI request is being processed.</li>
-</ul>
+- Response uses an abstract base class. Derived classes are for sending files or for sending (internally generated) dynamic content.
+- Complex objects can create problems when stored directly in vectors. Better to allocate them manually and store the pointers in a vector. Cleaner and less work in the end.
+- Control structure for CGI allows the main loop to continue while CGI request is being processed.
