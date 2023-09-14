@@ -97,7 +97,7 @@ void Server::acceptClients()
 				acceptError(new_sock);
 
 			addPollStruct(new_sock, POLLIN | POLLHUP);
-			_clients.push_back(new Client(_configs[i], new_sock, addr));
+			_clients.push_back(new Client(_configs[i], _pollStructs, new_sock, addr));
 		}
 	}
 }
@@ -111,13 +111,10 @@ void Server::handleClients()
 		try
 		{
 			_client = getClient(_pollStruct->fd);
-
 			if (pollhup())
 				continue;
-
 			if (pollin())
 				continue;
-
 			if (pollout())
 				continue;
 		}

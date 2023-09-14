@@ -1,7 +1,8 @@
 #include "webserv.hpp"
 
-Client::Client(const Config& config, int fd, sockaddr_in address):
+Client::Client(const Config& config, std::vector<pollfd>& pollStructs, int fd, sockaddr_in address):
 	_config(config),
+	_pollStructs(pollStructs),
 	_request(NULL),
 	_response(NULL),
 	_fd(fd), 
@@ -18,7 +19,8 @@ Client::Client(const Config& config, int fd, sockaddr_in address):
 }
 
 Client::Client(const Client& src):
-	_config(src._config)
+	_config(src._config),
+	_pollStructs(src._pollStructs)
 {
 	*this = src;
 }
@@ -307,7 +309,8 @@ void Client::launchChild()
 
 	if (_cgiPid == 0)
 	{
-		// close socketfds
+		for (size_t i = 0; i < _pollStructs.size(); ++i)
+			close (_pollStructs[i].fd);
 		execve(_request->cgiExecPath().c_str(), _argv.data(), _env.data());
 		perror("execve");
 		exit(EXIT_FAILURE);

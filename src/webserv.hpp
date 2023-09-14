@@ -58,7 +58,6 @@ typedef enum dynamicContentSelector
 	sessionLog
 }	dynCont;
 
-
 // internal headers
 # include "Binding/Binding.hpp"
 # include "Client/Client.hpp"

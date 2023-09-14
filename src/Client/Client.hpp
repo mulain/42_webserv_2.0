@@ -6,7 +6,7 @@
 class Client
 {
 	public:
-		Client(const Config&, int, sockaddr_in);
+		Client(const Config&, std::vector<pollfd>&, int, sockaddr_in);
 		Client(const Client&);
 		~Client();
 		
@@ -36,6 +36,7 @@ class Client
 		void							buildArgvEnv();
 
 		const Config&					_config;
+		std::vector<pollfd>&			_pollStructs;
 		Request*						_request;
 		Response*						_response;
 		int								_fd;
