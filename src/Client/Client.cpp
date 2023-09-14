@@ -307,11 +307,23 @@ void Client::launchChild()
 	{
 		for (size_t i = 0; i < _pollStructs.size(); ++i)
 			close(_pollStructs[i].fd);
+
+		closeFd(&_childToParent[0]);
+		if (dup2(_childToParent[1], STDOUT_FILENO) == -1)
+			cgiError();
+		
+		closeFd(&_parentToChild[1]);
+		if (dup2(_parentToChild[0], STDIN_FILENO) == -1)
+			cgiError();
+
 		execve(_request->cgiExecPath().c_str(), _argv.data(), _env.data());
-		childError();
+		cgiError();
 	}
 	else
 	{
+		closeFd(&_childToParent[1]);
+		closeFd(&_parentToChild[0]);
+		
 		_childBirth = time(NULL);
 		_cgiInProgress = true;
 	}
@@ -361,26 +373,21 @@ void Client::buildArgvEnv()
 
 void Client::cgiError()
 {
-	perror("cgiError");
-	
 	closeFd(&_parentToChild[0]);
 	closeFd(&_parentToChild[1]);
 	closeFd(&_childToParent[0]);
 	closeFd(&_childToParent[1]);
 
-	throw ErrorCode(500, sayMyName(__FUNCTION__));
-}
-
-void Client::childError()
-{
-	perror("childError");
-	
-	closeFd(&_parentToChild[0]);
-	closeFd(&_parentToChild[1]);
-	closeFd(&_childToParent[0]);
-	closeFd(&_childToParent[1]);
-
-	exit(EXIT_FAILURE);
+	if (_cgiPid == 0)
+	{
+		perror("CGI_child");
+		exit(EXIT_FAILURE);
+	}
+	else
+	{
+		perror("CGI_parent");
+		throw ErrorCode(500, sayMyName(__FUNCTION__));
+	}
 }
 
 void Client::closeFd(int* fd)
