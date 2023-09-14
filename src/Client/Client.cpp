@@ -301,7 +301,8 @@ void Client::launchChild()
 	if (_cgiPid == 0)
 	{
 		for (size_t i = 0; i < _pollStructs.size(); ++i)
-			close (_pollStructs[i].fd);
+			close(_pollStructs[i].fd);
+			
 		execve(_request->cgiExecPath().c_str(), _argv.data(), _env.data());
 		perror("execve");
 		exit(EXIT_FAILURE);
