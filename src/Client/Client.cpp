@@ -80,7 +80,7 @@ void Client::incomingData(std::vector<pollfd>::iterator pollStruct)
 		handleDelete();
 }
 
-std::string Client::sayMyName(std::string function)
+std::string Client::prependClassName(std::string function)
 {
 	return "Client::" + function;
 }
@@ -91,7 +91,7 @@ void Client::receive()
 
 	int bytesReceived = recv(_fd, buffer, RECV_CHUNK_SIZE, 0);
 	if (bytesReceived <= 0)
-		throw CloseConnection(sayMyName(__FUNCTION__), E_RECV);
+		throw CloseConnection(prependClassName(__FUNCTION__), E_RECV);
 	_buffer.append(buffer, bytesReceived);
 }
 
@@ -216,7 +216,7 @@ void Client::handlePost()
 		path = _request->updatedURL();
 		
 		if (resourceExists(path) && !_request->locationInfo()->delete_)
-			throw ErrorCode(409, sayMyName(__FUNCTION__)); // if DELETE not allowed and file already exists
+			throw ErrorCode(409, prependClassName(__FUNCTION__)); // if DELETE not allowed and file already exists
 	}
 
 	if (_append)
@@ -230,7 +230,7 @@ void Client::handlePost()
 	if (!outFile)
 	{
 		outFile.close();
-		throw ErrorCode(500, sayMyName(__FUNCTION__));
+		throw ErrorCode(500, prependClassName(__FUNCTION__));
 	}
 
 	outFile.write(_buffer.c_str(), _buffer.size());
@@ -274,7 +274,7 @@ bool Client::handleCGI()
 	if (WIFEXITED(status) == 0 || WEXITSTATUS(status) != 0) // WIFEXITED(status) == 0 -> child was interrupted
 	{
 		std::cerr << E_CL_CHILD << std::endl;
-		throw ErrorCode(500, sayMyName(__FUNCTION__));
+		throw ErrorCode(500, prependClassName(__FUNCTION__));
 	}
 	
 	if (resourceExists(_request->cgiOut()))
@@ -295,7 +295,7 @@ void Client::launchChild()
 	if ((_cgiPid = fork()) == -1)
 	{
 		perror("fork");
-		throw ErrorCode(500, sayMyName(__FUNCTION__));
+		throw ErrorCode(500, prependClassName(__FUNCTION__));
 	}
 
 	if (_cgiPid == 0)
