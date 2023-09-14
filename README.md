@@ -2,7 +2,6 @@
 A 42 School project about developing a C++98 web server.<br>
 I completely rewrote this project with a cleaner structure.
 <br>
-<br>
 ## Main points
 - No threading allowed. Still have to serve multiple clients without blocking
 - User must be able to configure multiple host:port combinations to listen on
