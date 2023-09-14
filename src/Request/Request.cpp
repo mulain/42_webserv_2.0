@@ -55,7 +55,7 @@ void Request::process()
 	updateVars();
 }
 
-std::string Request::sayMyName(std::string function)
+std::string Request::prependClassName(std::string function)
 {
 	return "Request::" + function;
 }
@@ -63,7 +63,7 @@ std::string Request::sayMyName(std::string function)
 void Request::parseRequestLine()
 {
 	if (buffer->find("\r\n") == std::string::npos)
-		throw ErrorCode(400, sayMyName(__FUNCTION__));
+		throw ErrorCode(400, SAYMYNAME);
 	
 	_method = splitEraseStr(*buffer, " ");
 	_URL = splitEraseStr(*buffer, " ");
@@ -88,9 +88,9 @@ void Request::parseRequestHeaders()
 	if (buffer->find("\r\n\r\n") == std::string::npos)
 	{
 		if (buffer->size() >= MAX_REQHEADSIZE)
-			throw ErrorCode(431, sayMyName(__FUNCTION__));
+			throw ErrorCode(431, SAYMYNAME);
 		else
-			throw ErrorCode(400, sayMyName(__FUNCTION__));
+			throw ErrorCode(400, SAYMYNAME);
 	}
 	_headers = parseStrMap(*buffer, ":", "\r\n", "\r\n");
 	
@@ -182,22 +182,22 @@ void Request::selectConfig()
 void Request::requestError()
 {
 	if (_httpProtocol != HTTPVERSION)
-		throw ErrorCode(505, sayMyName(__FUNCTION__));
+		throw ErrorCode(505, SAYMYNAME);
 
 	if (_method != GET && _method != POST && _method != DELETE)
-		throw ErrorCode(501, sayMyName(__FUNCTION__));
+		throw ErrorCode(501, SAYMYNAME);
 
 	if (_contentLength > _activeConfig->getClientMaxBody())
-		throw ErrorCode(413, sayMyName(__FUNCTION__));
+		throw ErrorCode(413, SAYMYNAME);
 
 	std::map<std::string, locInfo>::const_iterator it = _activeConfig->getLocations()->find(_directory);
 
 	if (it == _activeConfig->getLocations()->end())
 	{
 		if ((_method == GET || _method == DELETE) && !resourceExists(prependRoot(_URL)))
-			throw ErrorCode(404, sayMyName(__FUNCTION__)); // can't check before in case of http redir
+			throw ErrorCode(404, SAYMYNAME); // can't check before in case of http redir
 
-		throw ErrorCode(403, sayMyName(__FUNCTION__)); // should always 404 on a production system to not leak file structure
+		throw ErrorCode(403, SAYMYNAME); // should always 404 on a production system to not leak file structure
 	}
 	
 	_locationInfo = it->second;
@@ -205,7 +205,7 @@ void Request::requestError()
 	if ((_method == GET && !_locationInfo.get)
 		|| (_method == POST && !_locationInfo.post)
 		|| (_method == DELETE && !_locationInfo.delete_)) 
-		throw ErrorCode(405, sayMyName(__FUNCTION__));
+		throw ErrorCode(405, SAYMYNAME);
 }
 
 void Request::updateVars()
@@ -243,10 +243,10 @@ void Request::updateVars()
 		_updatedDirectory = _locationInfo.upload_dir;
 
 		if (!resourceExists(prependRoot(_updatedDirectory)))
-			throw ErrorCode(500, sayMyName(__FUNCTION__));
+			throw ErrorCode(500, SAYMYNAME);
 		
 		if (_activeConfig->getLocations()->find(_updatedDirectory) == _activeConfig->getLocations()->end())
-			throw ErrorCode(403, sayMyName(__FUNCTION__)); // upload_redir also has to be set in the config file
+			throw ErrorCode(403, SAYMYNAME); // upload_redir also has to be set in the config file
 		
 		_locationInfo = _activeConfig->getLocations()->find(_updatedDirectory)->second; // upload_redir changes locInfo
 	}

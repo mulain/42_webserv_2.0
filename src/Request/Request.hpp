@@ -41,7 +41,7 @@ class Request
 		const std::string&							root() const;
 	
 	private:
-		std::string									sayMyName(std::string);
+		std::string									prependClassName(std::string);
 		void										parseRequestLine();
 		void										parseRequestHeaders();
 		void										handleSessionID();

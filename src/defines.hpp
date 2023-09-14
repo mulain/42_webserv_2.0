@@ -5,6 +5,7 @@
 # define SERVERVERSION	"webserv v0.69"
 # define WHITESPACE		" \t\v\r\n"
 # define HTTPVERSION	"HTTP/1.1"
+# define SAYMYNAME		prependClassName(__FUNCTION__)
 # define ANNOUNCEME		std::cout << "Announcer: " << __FUNCTION__ << std::endl;
 # define ANNOUNCEME_FD	std::cout << "Announcer: " << __FUNCTION__ << " on fd " << getFd() << std::endl;
 # define GOODBYE		std::cout << "Now leaving: " << __FUNCTION__ << std::endl;	
