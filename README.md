@@ -1,8 +1,10 @@
-# 42_webserv
+# 42_webserv 2.0
 A 42 School project about developing a C++98 web server.<br>
-I completely rewrote this project with a cleaner structure.
+After submitting, I completely rewrote this project with a cleaner structure.
 <br>
 ## Main points
+<ul>
+
 - No threading allowed. Still have to serve multiple clients without blocking
 - User must be able to configure multiple host:port combinations to listen on
 - Multiple identical host:port combinations have to be resolved by host name
@@ -15,6 +17,8 @@ I completely rewrote this project with a cleaner structure.
 - Implement http redirection
 - Implement GET POST and DELETE methods
 - Implement basic cookie
+</ul>
+
 <br>
 ## Notes
 <ul>
