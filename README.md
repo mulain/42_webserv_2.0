@@ -1,5 +1,5 @@
 # 42_webserv
-A 42 School project about developing a C++98 web server.
+A 42 School project about developing a C++98 web server.<br>
 I completely rewrote this project with a cleaner structure.
 <br>
 <br>
