@@ -16,7 +16,6 @@ After submitting, I completely rewrote this project with a cleaner structure.
 - Implement GET POST and DELETE methods
 - Implement basic cookie
 
-<br>
 ## Notes
 <ul>
 	<li>Response uses an abstract base class. Derived classes are for sending files or for sending (internally generated) dynamic content.</li>
