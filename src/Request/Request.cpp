@@ -65,7 +65,7 @@ std::string Request::prependClassName(std::string function)
 void Request::parseRequestLine()
 {
 	if (buffer->find("\r\n") == std::string::npos)
-		throw ErrorCode(400, prependClassName(__FUNCTION__));
+		throw ErrorCode(400, MYNAME);
 	
 	_method = splitEraseStr(*buffer, " ");
 	_URL = splitEraseStr(*buffer, " ");
@@ -90,9 +90,9 @@ void Request::parseRequestHeaders()
 	if (buffer->find("\r\n\r\n") == std::string::npos)
 	{
 		if (buffer->size() >= MAX_REQHEADSIZE)
-			throw ErrorCode(431, prependClassName(__FUNCTION__));
+			throw ErrorCode(431, MYNAME);
 		else
-			throw ErrorCode(400, prependClassName(__FUNCTION__));
+			throw ErrorCode(400, MYNAME);
 	}
 	_headers = parseStrMap(*buffer, ":", "\r\n", "\r\n");
 	
@@ -184,22 +184,22 @@ void Request::selectConfig()
 void Request::requestError()
 {
 	if (_httpProtocol != HTTPVERSION)
-		throw ErrorCode(505, prependClassName(__FUNCTION__));
+		throw ErrorCode(505, MYNAME);
 
 	if (_method != GET && _method != POST && _method != DELETE)
-		throw ErrorCode(501, prependClassName(__FUNCTION__));
+		throw ErrorCode(501, MYNAME);
 
 	if (_contentLength > _activeConfig->getClientMaxBody())
-		throw ErrorCode(413, prependClassName(__FUNCTION__));
+		throw ErrorCode(413, MYNAME);
 
 	std::map<std::string, locInfo>::const_iterator it = _activeConfig->getLocations()->find(_directory);
 
 	if (it == _activeConfig->getLocations()->end())
 	{
 		if ((_method == GET || _method == DELETE) && !resourceExists(prependRoot(_URL)))
-			throw ErrorCode(404, prependClassName(__FUNCTION__)); // can't check before in case of http redir
+			throw ErrorCode(404, MYNAME); // can't check before in case of http redir
 
-		throw ErrorCode(403, prependClassName(__FUNCTION__)); // should always 404 on a production system to not leak file structure
+		throw ErrorCode(403, MYNAME); // should always 404 on a production system to not leak file structure
 	}
 	
 	_locationInfo = it->second;
@@ -207,7 +207,7 @@ void Request::requestError()
 	if ((_method == GET && !_locationInfo.get)
 		|| (_method == POST && !_locationInfo.post)
 		|| (_method == DELETE && !_locationInfo.delete_)) 
-		throw ErrorCode(405, prependClassName(__FUNCTION__));
+		throw ErrorCode(405, MYNAME);
 }
 
 void Request::updateVars()
@@ -253,10 +253,10 @@ void Request::updateVars()
 		_updatedDirectory = _locationInfo.upload_dir;
 
 		if (!resourceExists(prependRoot(_updatedDirectory)))
-			throw ErrorCode(500, prependClassName(__FUNCTION__));
+			throw ErrorCode(500, MYNAME);
 		
 		if (_activeConfig->getLocations()->find(_updatedDirectory) == _activeConfig->getLocations()->end())
-			throw ErrorCode(403, prependClassName(__FUNCTION__)); // upload_redir also has to be set in the config file
+			throw ErrorCode(403, MYNAME); // upload_redir also has to be set in the config file
 		
 		_locationInfo = _activeConfig->getLocations()->find(_updatedDirectory)->second; // upload_redir changes locInfo
 	}
