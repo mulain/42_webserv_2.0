@@ -216,23 +216,22 @@ void Client::handleDelete()
 void Client::handlePost()
 {
 	std::ofstream	outFile;
-	std::string		path;
 	
 	if (_request->cgiRequest())
-		path = _request->cgiIn();
+	{
+		// write to pipe
+	}
 	else
 	{
-		path = _request->updatedURL();
-		
-		if (resourceExists(path) && !_request->locationInfo()->delete_)
+		if (resourceExists(_request->updatedURL()) && !_request->locationInfo()->delete_)
 			throw ErrorCode(409, sayMyName(__FUNCTION__)); // if DELETE not allowed and file already exists
 	}
 
 	if (_append)
-		outFile.open(path.c_str(), std::ios::binary | std::ios::app);
+		outFile.open(_request->updatedURL().c_str(), std::ios::binary | std::ios::app);
 	else
 	{
-		outFile.open(path.c_str(), std::ios::binary | std::ios::trunc);
+		outFile.open(_request->updatedURL().c_str(), std::ios::binary | std::ios::trunc);
 		_append = true;
 	}
 
@@ -286,14 +285,11 @@ bool Client::handleCGI()
 		throw ErrorCode(500, sayMyName(__FUNCTION__));
 	}
 	
-	if (resourceExists(_request->cgiOut()))
-		newResponse(_request->cgiOut());
+	// if good read from pipe
+		// do pipey things
 	else
 		newResponse(500);
 
-	if (_request->method() == POST && remove(_request->cgiIn().c_str()) != 0)
-		std::cerr << E_CL_TEMPFILEREMOVAL << std::endl;
-	
 	return false;
 }
 
@@ -301,19 +297,18 @@ void Client::launchChild()
 {
 	buildArgvEnv();
 
+	if (pipe(_parentToChild) == -1 || pipe(_childToParent) == -1)
+		cgiError();
+
 	if ((_cgiPid = fork()) == -1)
-	{
-		perror("fork");
-		throw ErrorCode(500, sayMyName(__FUNCTION__));
-	}
+		cgiError();
 
 	if (_cgiPid == 0)
 	{
 		for (size_t i = 0; i < _pollStructs.size(); ++i)
-			close (_pollStructs[i].fd);
+			close(_pollStructs[i].fd);
 		execve(_request->cgiExecPath().c_str(), _argv.data(), _env.data());
-		perror("execve");
-		exit(EXIT_FAILURE);
+		childError();
 	}
 	else
 	{
@@ -358,10 +353,39 @@ void Client::buildArgvEnv()
 	_envVec.push_back("SERVER_PORT=" + port.str());
 	_envVec.push_back("PATH_INFO=" + _request->updatedURL());
 	_envVec.push_back("HTTP_USER_AGENT=" + userAgent);
-	_envVec.push_back("INPUT_FILE=" + _request->cgiIn());
-	_envVec.push_back("OUTPUT_FILE=" + _request->cgiOut());
 
 	for (size_t i = 0; i < _envVec.size(); ++i)
 		_env.push_back(const_cast<char*>(_envVec[i].c_str()));
 	_env.push_back(NULL);
+}
+
+void Client::cgiError()
+{
+	perror("cgiError");
+	
+	closeFd(&_parentToChild[0]);
+	closeFd(&_parentToChild[1]);
+	closeFd(&_childToParent[0]);
+	closeFd(&_childToParent[1]);
+
+	throw ErrorCode(500, sayMyName(__FUNCTION__));
+}
+
+void Client::childError()
+{
+	perror("childError");
+	
+	closeFd(&_parentToChild[0]);
+	closeFd(&_parentToChild[1]);
+	closeFd(&_childToParent[0]);
+	closeFd(&_childToParent[1]);
+
+	exit(EXIT_FAILURE);
+}
+
+void Client::closeFd(int* fd)
+{
+	if (*fd != -1)
+		close(*fd);
+	*fd = -1;
 }

@@ -29,8 +29,6 @@ class Request
 		bool										dirListing() const;
 		bool										cgiRequest() const;
 		const std::string&							cgiExecPath() const;
-		const std::string&							cgiIn() const;
-		const std::string&							cgiOut() const;
 		const dynCont&								internalScript() const;
 
 		bool										setCookie() const;
@@ -73,8 +71,6 @@ class Request
 		std::string									_file;
 		bool										_cgiRequest;
 		std::string									_cgiExecPath;
-		std::string									_cgiIn;
-		std::string									_cgiOut;
 		dynCont										_internalScript;
 		bool										_setCookie;
 		std::string									_standardFile;
