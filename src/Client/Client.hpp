@@ -52,8 +52,6 @@ class Client
 		pid_t							_cgiPid;
 		time_t							_childBirth;
 		bool							_cgiInProgress;
-		int								_parentToChild[2];
-		int								_childToParent[2];
 
 		std::vector<std::string>		_envVec;
 		std::vector<char*>				_env;

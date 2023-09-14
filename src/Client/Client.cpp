@@ -11,12 +11,7 @@ Client::Client(const Config& config, std::vector<pollfd>& pollStructs, int fd, s
 	_bytesWritten(0),
 	_childBirth(0),
 	_cgiInProgress(false)
-{
-	_parentToChild[0] = -1;
-	_parentToChild[1] = -1;
-	_childToParent[0] = -1;
-	_childToParent[1] = -1;
-}
+{}
 
 Client::Client(const Client& src):
 	_config(src._config),
@@ -57,10 +52,6 @@ Client& Client::operator=(const Client& src)
 	_cgiPid = src._cgiPid;
 	_childBirth = src._childBirth;
 	_cgiInProgress = src._cgiInProgress;
-	_parentToChild[0] = src._parentToChild[0];
-	_parentToChild[1] = src._parentToChild[1];
-	_childToParent[0] = src._childToParent[0];
-	_childToParent[1] = src._childToParent[1];
 	
 	_envVec = src._envVec;
 	_env = src._env;
