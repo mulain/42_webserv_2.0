@@ -35,10 +35,10 @@ class Client;
 class Config;
 class ConfigFile;
 class Request;
+class Response;
 class Server;
 
 // typedefs
-
 typedef struct locationInformation
 {
 	bool			get;
@@ -60,30 +60,21 @@ typedef enum dynamicContentSelector
 
 
 // internal headers
+# include "Binding/Binding.hpp"
+# include "Client/Client.hpp"
+# include "exceptions/CloseConnection.exception.hpp"
+# include "exceptions/ErrorCode.exception.hpp"
+# include "Request/Request.hpp"
+# include "Response/A_Response.hpp"
+# include "Response/DynContent.Response.hpp"
+# include "Response/File.Response.hpp"
+# include "Server/Server.hpp"
+# include "setup/Config.hpp"
+# include "setup/ConfigFile.hpp"
+# include "utils/utils.hpp"
 # include "defines.hpp"
 
-// exceptions
-# include "ErrorCode.exception.hpp"
-# include "CloseConnection.exception.hpp"
-
-// Response
-# include "A_Response.hpp"
-# include "DynContent.Response.hpp"
-# include "File.Response.hpp"
-
-// setup
-# include "Config.hpp"
-# include "ConfigFile.hpp"
-
-# include "Binding.hpp"
-# include "Request.hpp"
-# include "Client.hpp"
-# include "Server.hpp"
-
-# include "utils.hpp"
-
 // global vars
-
 extern volatile sig_atomic_t				signum;
 extern std::map<std::string, std::string>	mimeTypes;
 

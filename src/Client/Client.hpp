@@ -34,9 +34,6 @@ class Client
 
 		void							launchChild();
 		void							buildArgvEnv();
-		void							cgiError();
-		void							childError();
-		void							closeFd(int*);
 
 		const Config&					_config;
 		Request*						_request;

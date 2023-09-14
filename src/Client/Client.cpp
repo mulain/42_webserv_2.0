@@ -260,7 +260,7 @@ bool Client::handleCGI()
 	
 	if (!_cgiInProgress)
 	{
-		_pollStruct->events = POLLOUT | POLLHUP; // this is only ok because we have already finished receiving POST
+		_pollStruct->events = POLLOUT | POLLHUP;
 		launchChild();
 	}
 	
@@ -289,11 +289,8 @@ bool Client::handleCGI()
 	else
 		newResponse(500);
 
-	if (_request->method() == POST)
-	{
-		if (unlink(_request->cgiIn().c_str()) != 0)
-			std::cerr << E_CL_TEMPFILEREMOVAL << std::endl;
-	}
+	if (_request->method() == POST && remove(_request->cgiIn().c_str()) != 0)
+		std::cerr << E_CL_TEMPFILEREMOVAL << std::endl;
 	
 	return false;
 }
@@ -303,13 +300,17 @@ void Client::launchChild()
 	buildArgvEnv();
 
 	if ((_cgiPid = fork()) == -1)
-		cgiError();
-	
+	{
+		perror("fork");
+		throw ErrorCode(500, sayMyName(__FUNCTION__));
+	}
+
 	if (_cgiPid == 0)
 	{
 		// close socketfds
 		execve(_request->cgiExecPath().c_str(), _argv.data(), _env.data());
-		childError();
+		perror("execve");
+		exit(EXIT_FAILURE);
 	}
 	else
 	{
@@ -360,35 +361,4 @@ void Client::buildArgvEnv()
 	for (size_t i = 0; i < _envVec.size(); ++i)
 		_env.push_back(const_cast<char*>(_envVec[i].c_str()));
 	_env.push_back(NULL);
-}
-
-void Client::cgiError()
-{
-	perror("cgiError");
-	
-	closeFd(&_parentToChild[0]); // these arent implemented as of now
-	closeFd(&_parentToChild[1]);
-	closeFd(&_childToParent[0]);
-	closeFd(&_childToParent[1]);
-
-	throw ErrorCode(500, sayMyName(__FUNCTION__));
-}
-
-void Client::childError()
-{
-	perror("Child");
-
-	closeFd(&_parentToChild[0]);
-	closeFd(&_parentToChild[1]);
-	closeFd(&_childToParent[0]);
-	closeFd(&_childToParent[1]);
-	
-	exit(EXIT_FAILURE);
-}
-
-void Client::closeFd(int* fd)
-{
-	if (*fd != -1)
-		close(*fd);
-	*fd = -1;
 }
