@@ -283,7 +283,7 @@ bool Client::handleCGI()
 		newResponse(500);
 
 	if (_request->method() == POST && remove(_request->cgiIn().c_str()) != 0)
-		std::cerr << E_CL_TEMPFILEREMOVAL << std::endl;
+		std::cerr << E_CL_TEMPFILEDEL << std::endl;
 	
 	return false;
 }

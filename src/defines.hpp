@@ -94,23 +94,23 @@
 # define I_C_NONDIRPATH		"Info: ServerConfig: Path does not end with a directory (no trailing '/'): "
 
 // Server
-# define E_ACCEPT				"Error: Server: accept()"
-# define E_LISTEN				"Error: Server: listen()"
-# define E_READ					"Error: Server: read()"
-# define E_WRITE_CHPIPE			"Error: Server: write() (to child pipe)"
-# define E_TEMPFILE				"Error: Server: Could not create temporary file."
-# define E_POSTFILE				"Error: Server: Could not create / open POST file."
-# define E_PIPE					"Error: Server: pipe()."
-# define E_DUP2					"Error: Server: dup2()."
-# define E_IFSTREAM				"Error: Server: ifstream object"
+# define E_ACCEPT			"Error: Server: accept()"
+# define E_LISTEN			"Error: Server: listen()"
+# define E_READ				"Error: Server: read()"
+# define E_WRITE_CHPIPE		"Error: Server: write() (to child pipe)"
+# define E_TEMPFILE			"Error: Server: Could not create temporary file."
+# define E_POSTFILE			"Error: Server: Could not create / open POST file."
+# define E_PIPE				"Error: Server: pipe()."
+# define E_DUP2				"Error: Server: dup2()."
+# define E_IFSTREAM			"Error: Server: ifstream object"
 
-# define I_CONNECTIONLIMIT		"Info: Server: Connection limit reached."
-# define I_CLOSENODATA			"Info: Server: Connection closed (no data received)."
+# define I_CONNECTIONLIMIT	"Info: Server: Connection limit reached."
+# define I_CLOSENODATA		"Info: Server: Connection closed (no data received)."
 
 // Client
-# define E_CL_CHILD				"Error: Client: child exited with error or was terminated."
-# define E_CL_CHILDTIMEOUT		"Error: Client: child timed out."
-# define E_CL_TEMPFILEREMOVAL	"Error: Client: Could not remove POST CGI tempfile."
+# define E_CL_CHILD			"Error: Client: child exited with error or was terminated."
+# define E_CL_CHILDTIMEOUT	"Error: Client: child timed out."
+# define E_CL_TEMPFILEDEL	"Error: Client: Could not remove POST CGI tempfile."
 
 // Response
 # define E_SEND					"No data sent."
