@@ -2,7 +2,7 @@
 # define DEFINES_HPP
 
 // general macros
-# define SERVERVERSION	"webserv v0.69"
+# define SERVERVERSION	"webserv v2.0"
 # define WHITESPACE		" \t\v\r\n"
 # define HTTPVERSION	"HTTP/1.1"
 # define MYNAME			prependClassName(__FUNCTION__)
