@@ -2,7 +2,7 @@
 *.out
 *.code-workspace
 /obj
-
+.idea
 webserv
 
 .vscode/
@@ -10,9 +10,6 @@ webserv
 
 output.txt
 
-system/logs/
+system/logs/*.log
 
-system/dirListing.html
-system/errorPage.html
 system/cgi.html
-website/sessionlog.html
