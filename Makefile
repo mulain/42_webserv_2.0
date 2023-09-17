@@ -5,7 +5,7 @@ RM		=	rm -rf
 FLAGS	=	-Wall -Wextra -Werror -pedantic -std=c++98 #-fsanitize=address
 INCLUDE	=	-I src
 
-COLOR	=	\033[30m
+COLOR	=	\033[38m
 RESET	=	\033[0m
 
 SRCFILE	=	webserv.cpp\
