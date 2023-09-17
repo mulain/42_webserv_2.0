@@ -3,12 +3,12 @@
 Server::Server(int argc, char** argv)
 {
 	std::string	path = "system/configs/example.conf";
-	
+
 	if (argc > 1)
 		path = argv[1];
-	
+
 	ConfigFile	configFile(path.c_str());
-	
+
 	_configs = configFile.getConfigs();
 }
 
@@ -38,7 +38,7 @@ void Server::bindListeningSocket(const Config& config)
 	Binding*	newBinding = new Binding(config);
 	int			options = 1;
 	int			listen_fd;
-	
+
 	if ((listen_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1)
 		bindError(listen_fd, newBinding);
 
@@ -53,7 +53,7 @@ void Server::bindListeningSocket(const Config& config)
 
 	if (listen(listen_fd, SOMAXCONN) == -1)
 		bindError(listen_fd, newBinding);
-	
+
 	addPollStruct(listen_fd, POLLIN);
 	newBinding->setFd(listen_fd);
 	_bindings.push_back(newBinding);
@@ -78,13 +78,13 @@ void Server::acceptClients()
 	{
 		if (!(_pollStructs[i].revents & POLLIN))
 			continue;
-			
+
 		while (true)
 		{
 			sockaddr_in	addr;
 			socklen_t	addrSize = sizeof(addr);
 			int			new_sock;
-		
+
 			new_sock = accept(_pollStructs[i].fd, (sockaddr*)&addr, &addrSize);
 			if (new_sock == -1)
 			{
@@ -92,7 +92,7 @@ void Server::acceptClients()
 					return;
 				acceptError(new_sock);
 			}
-			
+
 			if (fcntl(new_sock, F_SETFL, O_NONBLOCK) == -1)
 				acceptError(new_sock);
 
@@ -169,14 +169,11 @@ bool Server::pollout()
 
 void Server::closeClient(std::string msg)
 {
-	size_t	index = _pollStruct - _pollStructs.begin();
-	
 	std::cout << "\nClosing Client on fd " << _pollStruct->fd << ": " << msg << std::endl;
 	close (_pollStruct->fd);
-	
-	_pollStructs.erase(_pollStruct);
-	_pollStruct = _pollStructs.begin() + index;
-	
+
+    _pollStruct = _pollStructs.erase(_pollStruct); // erase returns the next valid position
+
 	delete *_client;
 	_clients.erase(_client);
 }
@@ -184,7 +181,7 @@ void Server::closeClient(std::string msg)
 std::vector<Client*>::iterator Server::getClient(int fd)
 {
 	std::vector<Client*>::iterator it = _clients.begin();
-	
+
 	while (it != _clients.end() && (*it)->getFd() != fd)
 		++it;
 	if (it == _clients.end())
@@ -198,11 +195,11 @@ std::vector<Client*>::iterator Server::getClient(int fd)
 void Server::addPollStruct(int fd, short flags)
 {
 	pollfd	newPollStruct;
-	
+
 	newPollStruct.fd = fd;
 	newPollStruct.events = flags;
 	newPollStruct.revents = 0;
-	
+
 	_pollStructs.push_back(newPollStruct);
 }
 
@@ -224,14 +221,14 @@ void Server::acceptError(int fd)
 void Server::shutdown()
 {
 	std::cout << "\nShutdown." << std::endl;
-	
+
 	std::cout << "\nClosing " << _pollStructs.size() << (_pollStructs.size() == 1 ? " socket:" : " sockets:") << std::endl;
 	for (std::vector<pollfd>::iterator it = _pollStructs.begin(); it != _pollStructs.end(); ++it)
 	{
 		std::cout << "\tClosing socket fd " << it->fd << "." << std::endl;
 		close(it->fd);
 	}
-	
+
 	std::cout << "\nDeleting " << _bindings.size() << (_bindings.size() == 1 ? " Binding:" : " Bindings:") << std::endl;
 	for (size_t i = 0; !_bindings.empty(); ++i)
 	{
