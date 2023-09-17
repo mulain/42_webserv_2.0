@@ -11,7 +11,7 @@ webserv
 output.txt
 
 system/logs/*.log
-
+system/temp
 system/cgi.html
 
 knizl
