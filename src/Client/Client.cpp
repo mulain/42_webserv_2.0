@@ -135,7 +135,6 @@ void Client::newResponse(std::string sendPath)
 {
 	if (_response)
 		delete _response;
-	
 	_response = new File(200, sendPath, *_request);
 	_pollStruct->events = POLLOUT | POLLHUP;
 }
@@ -174,8 +173,16 @@ void Client::handleGet()
 
 	if (isDirectory(_request->updatedURL()))
 	{
-		std::string stdFile = _request->updatedURL() + _request->standardFile();
+		if (_request->standardFile().empty())
+		{
+			if (_request->dirListing())
+				newResponse(dirListing);
+			else
+				newResponse(404);
+			return;
+		}
 		
+		std::string stdFile = _request->updatedURL() + _request->standardFile();
 		if (resourceExists(stdFile))
 			newResponse(stdFile);
 		else if (_request->dirListing())
